@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Clock, Sun, Sunrise, CloudSun, ShoppingCart, Plus, Minus } from 'lucide-react';
+import { Clock, Sun, Sunrise, CloudSun, ShoppingCart, Plus, Minus, AlertTriangle } from 'lucide-react';
 
 function getTimeSlot() {
   const hour = new Date().getHours();
@@ -45,23 +45,23 @@ const itemVariants = {
   show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 300 } }
 };
 
-function MenuItemCard({ item, cartEntry, onAdd, onInc, onDec }) {
+function MenuItemCard({ item, cartEntry, onAdd, onInc, onDec, disabled }) {
   return (
-    <motion.div variants={itemVariants} whileHover={{ y: -6, boxShadow: '0 12px 24px rgba(0,0,0,0.06)' }} style={{ background: '#FFFFFF', borderRadius: '20px', padding: '20px', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column' }}>
+    <motion.div variants={itemVariants} whileHover={{ y: disabled ? 0 : -6, boxShadow: disabled ? 'none' : '0 12px 24px rgba(0,0,0,0.06)' }} style={{ background: '#FFFFFF', borderRadius: '20px', padding: '20px', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column', opacity: disabled ? 0.6 : 1, pointerEvents: disabled ? 'none' : 'auto' }}>
       <motion.div whileHover={{ scale: 1.1, rotate: 5 }} style={{ fontSize: '56px', textAlign: 'center', marginBottom: '16px', userSelect: 'none' }}>{item.emoji}</motion.div>
       <div style={{ fontSize: '16px', fontWeight: 800, color: '#111827', marginBottom: '8px', textAlign: 'center' }}>{item.name}</div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', background: '#F9FAFB', padding: '8px 12px', borderRadius: '12px' }}>
-        <span style={{ color: '#FC8019', fontWeight: 800, fontFamily: "'Courier New', monospace", fontSize: '16px' }}>₹{item.price}</span>
+        <span style={{ color: disabled ? '#9CA3AF' : '#FC8019', fontWeight: 800, fontFamily: "'Courier New', monospace", fontSize: '16px' }}>₹{item.price}</span>
         <span style={{ color: '#6B7280', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}><Clock size={14} strokeWidth={3} /> {item.prepTime}m</span>
       </div>
 
       {!cartEntry ? (
-        <motion.button whileHover={{ scale: 1.02, backgroundColor: '#FFF0E5' }} whileTap={{ scale: 0.96 }} onClick={() => onAdd(item)} style={{ background: 'transparent', color: '#FC8019', border: '2px solid #FC8019', borderRadius: '12px', padding: '12px', fontSize: '14px', fontWeight: 800, width: '100%', cursor: 'pointer' }}>Add to Cart</motion.button>
+        <motion.button whileHover={{ scale: 1.02, backgroundColor: '#FFF0E5' }} whileTap={{ scale: 0.96 }} onClick={() => onAdd(item)} disabled={disabled} style={{ background: 'transparent', color: disabled ? '#9CA3AF' : '#FC8019', border: `2px solid ${disabled ? '#D1D5DB' : '#FC8019'}`, borderRadius: '12px', padding: '12px', fontSize: '14px', fontWeight: 800, width: '100%', cursor: disabled ? 'not-allowed' : 'pointer' }}>Add to Cart</motion.button>
       ) : (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-          <motion.button whileTap={{ scale: 0.9 }} onClick={() => onDec(item.id)} style={{ flex: 1, padding: '12px 0', background: '#FCEBEB', border: 'none', borderRadius: '12px', color: '#A32D2D', cursor: 'pointer', display: 'flex', justifyContent: 'center' }}><Minus size={18} strokeWidth={3} /></motion.button>
+          <motion.button whileTap={{ scale: 0.9 }} onClick={() => onDec(item.id)} disabled={disabled} style={{ flex: 1, padding: '12px 0', background: '#FCEBEB', border: 'none', borderRadius: '12px', color: '#A32D2D', cursor: 'pointer', display: 'flex', justifyContent: 'center' }}><Minus size={18} strokeWidth={3} /></motion.button>
           <span style={{ minWidth: '32px', textAlign: 'center', fontWeight: 800, fontSize: '16px', color: '#111827' }}>{cartEntry.qty}</span>
-          <motion.button whileTap={{ scale: 0.9 }} onClick={() => onInc(item.id)} style={{ flex: 1, padding: '12px 0', background: '#FC8019', border: 'none', borderRadius: '12px', color: '#fff', cursor: 'pointer', display: 'flex', justifyContent: 'center' }}><Plus size={18} strokeWidth={3} /></motion.button>
+          <motion.button whileTap={{ scale: 0.9 }} onClick={() => onInc(item.id)} disabled={disabled} style={{ flex: 1, padding: '12px 0', background: '#FC8019', border: 'none', borderRadius: '12px', color: '#fff', cursor: 'pointer', display: 'flex', justifyContent: 'center' }}><Plus size={18} strokeWidth={3} /></motion.button>
         </div>
       )}
     </motion.div>
@@ -90,6 +90,7 @@ export default function Menu() {
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState('All');
   const [cartItems, setCartItems] = useState([]); 
+  const [canteenSettings, setCanteenSettings] = useState({ isOpen: true });
 
   const timeSlot = getTimeSlot();
   const SlotIcon = timeSlot.icon;
@@ -104,6 +105,13 @@ export default function Menu() {
       } finally { setLoading(false); }
     }
     fetchMenu();
+  }, []);
+
+  useEffect(() => {
+    const unsub = onSnapshot(doc(db, 'settings', 'canteen'), snap => {
+      if (snap.exists()) setCanteenSettings(snap.data());
+    });
+    return () => unsub();
   }, []);
 
   const filteredItems = activeFilter === 'All' ? menuItems : menuItems.filter(i => i.category === activeFilter);
@@ -121,6 +129,18 @@ export default function Menu() {
           <h1 style={{ fontSize: '32px', fontWeight: 800, color: '#111827', margin: '0 0 8px 0', letterSpacing: '-0.02em' }}>Taste the Best</h1>
           <p style={{ fontSize: '16px', color: '#6B7280', margin: '0 0 32px 0', fontWeight: 600 }}>Explore our massive culinary catalog 🌱</p>
         </motion.div>
+
+        <AnimatePresence>
+          {!canteenSettings.isOpen && (
+            <motion.div initial={{ opacity: 0, height: 0, scale: 0.95 }} animate={{ opacity: 1, height: 'auto', scale: 1 }} exit={{ opacity: 0, height: 0 }} style={{ padding: '20px', background: '#FCEBEB', border: '1px solid #FCA5A5', color: '#111827', borderRadius: '16px', marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '16px', boxShadow: '0 4px 12px rgba(163,45,45,0.05)' }}>
+              <div style={{ background: '#A32D2D', color: '#fff', borderRadius: '50%', padding: '8px' }}><AlertTriangle size={28} /></div>
+              <div>
+                <div style={{ fontWeight: 800, fontSize: '18px', color: '#991B1B', marginBottom: '2px' }}>The Kitchen is Closed</div>
+                <div style={{ fontSize: '14px', color: '#B91C1C', fontWeight: 500 }}>Our chefs are currently unavailable or on break. Orders cannot be placed at this time.</div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} style={{ background: 'linear-gradient(135deg, #FC8019 0%, #111827 100%)', borderRadius: '24px', padding: '24px', marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '20px', color: '#fff', boxShadow: '0 10px 30px rgba(252,128,25,0.2)' }}>
           <div style={{ background: 'rgba(255,255,255,0.2)', padding: '16px', borderRadius: '16px' }}><SlotIcon size={32} strokeWidth={2.5} /></div>
@@ -143,7 +163,7 @@ export default function Menu() {
           <motion.div variants={listVariants} initial="hidden" animate="show" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '20px' }}>
             <AnimatePresence mode="popLayout">
               {filteredItems.map(item => (
-                <MenuItemCard key={item.id} item={item} cartEntry={cartItems.find(c => c.id === item.id)} onAdd={addItem} onInc={incrementItem} onDec={decrementItem} />
+                <MenuItemCard key={item.id} item={item} cartEntry={cartItems.find(c => c.id === item.id)} onAdd={addItem} onInc={incrementItem} onDec={decrementItem} disabled={!canteenSettings.isOpen} />
               ))}
             </AnimatePresence>
           </motion.div>
