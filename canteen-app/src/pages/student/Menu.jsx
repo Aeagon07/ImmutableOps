@@ -2,152 +2,32 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../../firebase';
-import { useAuth } from '../../context/AuthContext';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Clock, Sun, Sunrise, CloudSun, ShoppingCart, Plus, Minus } from 'lucide-react';
 
-// ─── Time-based recommendation config ────────────────────────────────────────
 function getTimeSlot() {
   const hour = new Date().getHours();
   const minute = new Date().getMinutes();
   const totalMinutes = hour * 60 + minute;
 
-  if (totalMinutes < 11 * 60) {
-    return {
-      label: '☀ Good morning! Popular breakfast picks:',
-      items: ['Chai', 'Sandwich', 'Samosa'],
-    };
-  } else if (totalMinutes <= 14 * 60 + 30) {
-    return {
-      label: '🍽 Lunch rush! Popular now:',
-      items: ['Veg Thali', 'Misal Pav', 'Juice'],
-    };
-  } else {
-    return {
-      label: '☕ Afternoon snacks:',
-      items: ['Coffee', 'Vada Pav', 'Samosa'],
-    };
-  }
-}
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function NavBar({ user, onLogout }) {
-  return (
-    <header
-      style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 100,
-        height: '52px',
-        background: '#FFFFFF',
-        borderBottom: '1px solid #E5E7EB',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 16px',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.06)' // subtle sticky distinction
-      }}
-    >
-      <span style={{ fontSize: '16px', fontWeight: 700, color: '#1D9E75' }}>
-        🍽 CaféSync
-      </span>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <span style={{ fontSize: '13px', color: '#111827', fontWeight: 500 }}>
-          {user?.name || 'Student'}
-        </span>
-        <button
-          onClick={onLogout}
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: '#A32D2D',
-            fontSize: '13px',
-            fontWeight: 500,
-            cursor: 'pointer',
-            padding: '4px 8px',
-            transition: 'opacity 0.15s'
-          }}
-          onMouseEnter={e => e.currentTarget.style.opacity = '0.88'}
-          onMouseLeave={e => e.currentTarget.style.opacity = '1'}
-        >
-          Logout
-        </button>
-      </div>
-    </header>
-  );
-}
-
-function RecommendationBanner({ slot, menuItems }) {
-  const recPills = slot.items.map(name => {
-    const found = menuItems.find(m => m.name.toLowerCase() === name.toLowerCase());
-    return { name, emoji: found ? found.emoji : null };
-  });
-
-  return (
-    <div
-      style={{
-        background: '#E1F5EE',
-        border: '1px solid #5DCAA5',
-        borderRadius: '12px',
-        padding: '14px 16px',
-        marginBottom: '20px',
-        display: 'flex',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        gap: '8px'
-      }}
-    >
-      <span style={{ fontSize: '14px', fontWeight: 600, color: '#085041', marginRight: '4px' }}>
-        {slot.label}
-      </span>
-      {recPills.map(pill => (
-        <span
-          key={pill.name}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '4px',
-            background: '#FFFFFF',
-            border: '1px solid #5DCAA5',
-            borderRadius: '20px',
-            padding: '3px 10px',
-            fontSize: '11px',
-            fontWeight: 600,
-            color: '#085041',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {pill.emoji && <span>{pill.emoji}</span>}
-          {pill.name}
-        </span>
-      ))}
-    </div>
-  );
+  if (totalMinutes < 11 * 60) return { label: 'Good morning! Breakfast picks', icon: Sunrise, items: ['Chai', 'Sandwich', 'Samosa'] };
+  else if (totalMinutes <= 14 * 60 + 30) return { label: 'Lunch rush! Popular now', icon: Sun, items: ['Veg Thali', 'Misal Pav', 'Juice'] };
+  else return { label: 'Afternoon snacks', icon: CloudSun, items: ['Coffee', 'Vada Pav', 'Samosa'] };
 }
 
 function CategoryFilters({ categories, active, onChange }) {
   return (
-    <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
+    <div style={{ display: 'flex', gap: '10px', padding: '16px', marginBottom: '32px', flexWrap: 'wrap', position: 'sticky', top: '10px', zIndex: 10, background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(16px)', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.8)', boxShadow: '0 8px 32px rgba(0,0,0,0.05)' }}>
       {categories.map(cat => {
         const isActive = cat === active;
         return (
           <button
             key={cat}
             onClick={() => onChange(cat)}
-            style={{
-              padding: '6px 14px',
-              borderRadius: '20px',
-              border: isActive ? 'none' : '1px solid #E5E7EB',
-              background: isActive ? '#1D9E75' : '#FFFFFF',
-              color: isActive ? '#fff' : '#6B7280',
-              fontWeight: 500,
-              fontSize: '13px',
-              cursor: 'pointer',
-              transition: 'opacity 0.15s, transform 0.1s',
-            }}
-            onMouseEnter={e => e.currentTarget.style.opacity = '0.88'}
-            onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+            style={{ position: 'relative', padding: '10px 24px', borderRadius: '30px', border: 'none', background: 'transparent', color: isActive ? '#fff' : '#6B7280', fontWeight: 700, fontSize: '14px', cursor: 'pointer', outline: 'none', zIndex: 1 }}
           >
-            {cat}
+            {isActive && <motion.div layoutId="activeCat" style={{ position: 'absolute', inset: 0, background: '#1D9E75', borderRadius: '30px', zIndex: -1, boxShadow: '0 4px 12px rgba(29,158,117,0.3)' }} transition={{ type: "spring", stiffness: 500, damping: 30 }} />}
+            <span style={{ position: 'relative', zIndex: 1 }}>{cat}</span>
           </button>
         );
       })}
@@ -155,249 +35,126 @@ function CategoryFilters({ categories, active, onChange }) {
   );
 }
 
+const listVariants = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.05 } }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30, scale: 0.95 },
+  show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 300 } }
+};
+
 function MenuItemCard({ item, cartEntry, onAdd, onInc, onDec }) {
   return (
-    <div
-      style={{
-        background: '#FFFFFF',
-        borderRadius: '12px',
-        padding: '14px 16px',
-        marginBottom: '10px',
-        border: '1px solid #E5E7EB',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
-        display: 'flex',
-        flexDirection: 'column'
-      }}
-    >
-      <div style={{ fontSize: '32px', textAlign: 'center', marginBottom: '8px' }}>
-        {item.emoji}
-      </div>
-      <div style={{ fontSize: '14px', fontWeight: 600, color: '#111827', marginBottom: '4px', textAlign: 'center' }}>
-        {item.name}
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-        <span style={{ color: '#1D9E75', fontWeight: 600, fontFamily: "'Courier New', monospace", fontSize: '14px' }}>
-          ₹{item.price}
-        </span>
-        <span style={{ color: '#6B7280', fontSize: '11px' }}>
-          {item.prepTime} min
-        </span>
+    <motion.div variants={itemVariants} whileHover={{ y: -6, boxShadow: '0 12px 24px rgba(0,0,0,0.06)' }} style={{ background: '#FFFFFF', borderRadius: '20px', padding: '20px', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column' }}>
+      <motion.div whileHover={{ scale: 1.1, rotate: 5 }} style={{ fontSize: '56px', textAlign: 'center', marginBottom: '16px', userSelect: 'none' }}>{item.emoji}</motion.div>
+      <div style={{ fontSize: '16px', fontWeight: 800, color: '#111827', marginBottom: '8px', textAlign: 'center' }}>{item.name}</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', background: '#F9FAFB', padding: '8px 12px', borderRadius: '12px' }}>
+        <span style={{ color: '#1D9E75', fontWeight: 800, fontFamily: "'Courier New', monospace", fontSize: '16px' }}>₹{item.price}</span>
+        <span style={{ color: '#6B7280', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}><Clock size={14} strokeWidth={3} /> {item.prepTime}m</span>
       </div>
 
       {!cartEntry ? (
-        <button
-          onClick={() => onAdd(item)}
-          style={{
-            background: 'transparent',
-            color: '#1D9E75',
-            border: '1.5px solid #1D9E75',
-            borderRadius: '8px',
-            padding: '10px 20px',
-            fontSize: '13px',
-            fontWeight: 500,
-            width: '100%',
-            cursor: 'pointer',
-            transition: 'opacity 0.15s, transform 0.1s'
-          }}
-          onMouseEnter={e => e.currentTarget.style.opacity = '0.88'}
-          onMouseLeave={e => e.currentTarget.style.opacity = '1'}
-          onMouseDown={e => e.currentTarget.style.transform = 'scale(0.98)'}
-          onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
-        >
-          Add 
-        </button>
+        <motion.button whileHover={{ scale: 1.02, backgroundColor: '#E1F5EE' }} whileTap={{ scale: 0.96 }} onClick={() => onAdd(item)} style={{ background: 'transparent', color: '#1D9E75', border: '2px solid #1D9E75', borderRadius: '12px', padding: '12px', fontSize: '14px', fontWeight: 800, width: '100%', cursor: 'pointer' }}>Add to Cart</motion.button>
       ) : (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
-          <button
-            onClick={() => onDec(item.id)}
-            style={{
-              flex: 1,
-              padding: '10px 0',
-              background: '#F5F7F6',
-              border: '1px solid #E5E7EB',
-              borderRadius: '8px',
-              fontWeight: 600,
-              fontSize: '14px',
-              cursor: 'pointer',
-              color: '#374151',
-            }}
-          >
-            −
-          </button>
-          <span style={{ minWidth: '28px', textAlign: 'center', fontWeight: 600, fontSize: '14px', color: '#1D9E75' }}>
-            {cartEntry.qty}
-          </span>
-          <button
-            onClick={() => onInc(item.id)}
-            style={{
-              flex: 1,
-              padding: '10px 0',
-              background: '#1D9E75',
-              border: 'none',
-              borderRadius: '8px',
-              fontWeight: 600,
-              fontSize: '14px',
-              cursor: 'pointer',
-              color: '#fff',
-            }}
-          >
-            +
-          </button>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+          <motion.button whileTap={{ scale: 0.9 }} onClick={() => onDec(item.id)} style={{ flex: 1, padding: '12px 0', background: '#FCEBEB', border: 'none', borderRadius: '12px', color: '#A32D2D', cursor: 'pointer', display: 'flex', justifyContent: 'center' }}><Minus size={18} strokeWidth={3} /></motion.button>
+          <span style={{ minWidth: '32px', textAlign: 'center', fontWeight: 800, fontSize: '16px', color: '#111827' }}>{cartEntry.qty}</span>
+          <motion.button whileTap={{ scale: 0.9 }} onClick={() => onInc(item.id)} style={{ flex: 1, padding: '12px 0', background: '#1D9E75', border: 'none', borderRadius: '12px', color: '#fff', cursor: 'pointer', display: 'flex', justifyContent: 'center' }}><Plus size={18} strokeWidth={3} /></motion.button>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
 
 function CartBottomBar({ cartItems, onCheckout }) {
-  const totalQty   = cartItems.reduce((sum, i) => sum + i.qty, 0);
+  const totalQty = cartItems.reduce((sum, i) => sum + i.qty, 0);
   const totalPrice = cartItems.reduce((sum, i) => sum + i.price * i.qty, 0);
-
   return (
-    <div
-      style={{
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: '60px',
-        background: '#FFFFFF',
-        borderTop: '1px solid #E5E7EB',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 16px',
-        zIndex: 200,
-        boxShadow: '0 -1px 3px rgba(0,0,0,0.06)'
-      }}
-    >
+    <motion.div initial={{ y: 100 }} animate={{ y: 0 }} exit={{ y: 100 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} style={{ position: 'fixed', bottom: '24px', right: '24px', left: 'calc(280px + 24px)', background: '#111827', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 24px', zIndex: 200, boxShadow: '0 12px 40px rgba(0,0,0,0.15)' }}>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <span style={{ fontSize: '14px', fontWeight: 600, color: '#111827' }}>
-          🛒 {totalQty} item{totalQty !== 1 ? 's' : ''}
-        </span>
-        <span style={{ fontSize: '13px', color: '#1D9E75', fontFamily: "'Courier New', monospace", fontWeight: 600 }}>
-          ₹{totalPrice}
-        </span>
+        <span style={{ fontSize: '14px', fontWeight: 600, color: '#9CA3AF', display: 'flex', alignItems: 'center', gap: '8px' }}><ShoppingCart size={16} strokeWidth={2.5} /> {totalQty} items selected</span>
+        <span style={{ fontSize: '20px', color: '#FFFFFF', fontFamily: "'Courier New', monospace", fontWeight: 800 }}>₹{totalPrice}</span>
       </div>
-
-      <button
-        onClick={onCheckout}
-        style={{
-          background: '#1D9E75',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '8px',
-          padding: '10px 20px',
-          fontWeight: 500,
-          fontSize: '13px',
-          cursor: 'pointer',
-          transition: 'opacity 0.15s',
-        }}
-        onMouseEnter={e => e.currentTarget.style.opacity = '0.88'}
-        onMouseLeave={e => e.currentTarget.style.opacity = '1'}
-      >
-        Checkout →
-      </button>
-    </div>
+      <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={onCheckout} style={{ background: '#1D9E75', color: '#fff', border: 'none', borderRadius: '12px', padding: '14px 28px', fontWeight: 700, fontSize: '15px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(29,158,117,0.4)' }}>
+        Proceed to Cart <motion.span animate={{ x: [0, 4, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>→</motion.span>
+      </motion.button>
+    </motion.div>
   );
 }
 
 export default function Menu() {
-  const { user, logout } = useAuth();
   const navigate = useNavigate();
-
-  const [menuItems,   setMenuItems]   = useState([]);
-  const [loading,     setLoading]     = useState(true);
+  const [menuItems, setMenuItems] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState('All');
-  const [cartItems,   setCartItems]   = useState([]); 
+  const [cartItems, setCartItems] = useState([]); 
 
-  const timeSlot   = getTimeSlot();
+  const timeSlot = getTimeSlot();
+  const SlotIcon = timeSlot.icon;
   const categories = ['All', 'Snacks', 'Meals', 'Beverages'];
 
   useEffect(() => {
     async function fetchMenu() {
       try {
-        setLoading(true);
-        const q    = query(collection(db, 'menu'), orderBy('displayOrder', 'asc'));
+        const q = query(collection(db, 'menu'), orderBy('displayOrder', 'asc'));
         const snap = await getDocs(q);
-        const items = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(item => item.available === true);
-        setMenuItems(items);
-      } catch (err) {
-        console.error('Menu fetch error:', err);
-      } finally {
-        setLoading(false);
-      }
+        setMenuItems(snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(item => item.available));
+      } finally { setLoading(false); }
     }
     fetchMenu();
   }, []);
 
-  const filteredItems = activeFilter === 'All'
-    ? menuItems
-    : menuItems.filter(i => i.category === activeFilter);
-
-  function getCartEntry(id) {
-    return cartItems.find(c => c.id === id) || null;
-  }
-
-  function addItem(item) {
-    setCartItems(prev => {
-      const exists = prev.find(c => c.id === item.id);
-      if (exists) return prev.map(c => c.id === item.id ? { ...c, qty: c.qty + 1 } : c);
-      return [...prev, { id: item.id, name: item.name, price: item.price, qty: 1, prepTime: item.prepTime }];
-    });
-  }
-
-  function incrementItem(id) {
-    setCartItems(prev => prev.map(c => c.id === id ? { ...c, qty: c.qty + 1 } : c));
-  }
-
-  function decrementItem(id) {
-    setCartItems(prev => {
-      const entry = prev.find(c => c.id === id);
-      if (!entry) return prev;
-      if (entry.qty === 1) return prev.filter(c => c.id !== id);
-      return prev.map(c => c.id === id ? { ...c, qty: c.qty - 1 } : c);
-    });
-  }
-
-  async function handleLogout() {
-    await logout();
-  }
-
+  const filteredItems = activeFilter === 'All' ? menuItems : menuItems.filter(i => i.category === activeFilter);
   const hasCart = cartItems.length > 0;
 
+  function addItem(item) { setCartItems(prev => { const exists = prev.find(c => c.id === item.id); return exists ? prev.map(c => c.id === item.id ? { ...c, qty: c.qty + 1 } : c) : [...prev, { ...item, qty: 1 }]; }); }
+  function incrementItem(id) { setCartItems(prev => prev.map(c => c.id === id ? { ...c, qty: c.qty + 1 } : c)); }
+  function decrementItem(id) { setCartItems(prev => { const entry = prev.find(c => c.id === id); if (!entry) return prev; return entry.qty === 1 ? prev.filter(c => c.id !== id) : prev.map(c => c.id === id ? { ...c, qty: c.qty - 1 } : c); }); }
+
   return (
-    <div style={{ minHeight: '100vh', background: '#F5F7F6', paddingBottom: hasCart ? '80px' : '20px' }}>
-      <NavBar user={user} onLogout={handleLogout} />
-
-      <main style={{ maxWidth: '600px', margin: '0 auto', padding: '20px 16px' }}>
+    <div style={{ paddingBottom: hasCart ? '120px' : '30px' }}>
+      <main style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px 24px' }}>
         
-        <h1 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', margin: '0 0 4px 0' }}>Today's Menu</h1>
-        <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 20px 0', lineHeight: 1.6 }}>Fresh items, ordered daily 🌱</p>
+        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
+          <h1 style={{ fontSize: '32px', fontWeight: 800, color: '#111827', margin: '0 0 8px 0', letterSpacing: '-0.02em' }}>Taste the Best</h1>
+          <p style={{ fontSize: '16px', color: '#6B7280', margin: '0 0 32px 0', fontWeight: 600 }}>Explore our massive culinary catalog 🌱</p>
+        </motion.div>
 
-        <RecommendationBanner slot={timeSlot} menuItems={menuItems} />
+        <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} style={{ background: 'linear-gradient(135deg, #1D9E75 0%, #085041 100%)', borderRadius: '24px', padding: '24px', marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '20px', color: '#fff', boxShadow: '0 10px 30px rgba(29,158,117,0.2)' }}>
+          <div style={{ background: 'rgba(255,255,255,0.2)', padding: '16px', borderRadius: '16px' }}><SlotIcon size={32} strokeWidth={2.5} /></div>
+          <div>
+            <div style={{ fontWeight: 800, fontSize: '20px', marginBottom: '4px' }}>{timeSlot.label}</div>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', opacity: 0.9 }}>
+              {timeSlot.items.map(name => {
+                const found = menuItems.find(m => m.name.toLowerCase() === name.toLowerCase());
+                return <span key={name} style={{ background: 'rgba(255,255,255,0.15)', borderRadius: '20px', padding: '4px 12px', fontSize: '13px', fontWeight: 700 }}>{found?.emoji} {name}</span>;
+              })}
+            </div>
+          </div>
+        </motion.div>
         
         <CategoryFilters categories={categories} active={activeFilter} onChange={setActiveFilter} />
 
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '40px 0', color: '#6B7280', fontSize: '13px' }}>Loading menu...</div>
+          <div style={{ textAlign: 'center', padding: '80px 0', color: '#6B7280', fontSize: '18px', fontWeight: 600 }}>Loading culinary catalog...</div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-            {filteredItems.map(item => (
-              <MenuItemCard
-                key={item.id}
-                item={item}
-                cartEntry={getCartEntry(item.id)}
-                onAdd={addItem}
-                onInc={incrementItem}
-                onDec={decrementItem}
-              />
-            ))}
-          </div>
+          <motion.div variants={listVariants} initial="hidden" animate="show" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '20px' }}>
+            <AnimatePresence mode="popLayout">
+              {filteredItems.map(item => (
+                <MenuItemCard key={item.id} item={item} cartEntry={cartItems.find(c => c.id === item.id)} onAdd={addItem} onInc={incrementItem} onDec={decrementItem} />
+              ))}
+            </AnimatePresence>
+          </motion.div>
         )}
       </main>
 
-      {hasCart && <CartBottomBar cartItems={cartItems} onCheckout={() => navigate('/student/cart', { state: { cartItems } })} />}
+      <AnimatePresence>
+        {hasCart && <CartBottomBar cartItems={cartItems} onCheckout={() => navigate('/student/cart', { state: { cartItems } })} />}
+      </AnimatePresence>
+
+      <style>{`@media(max-width: 768px) { div[style*="left: calc(280px + 24px)"] { left: 24px !important; } }`}</style>
     </div>
   );
 }

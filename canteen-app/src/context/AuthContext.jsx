@@ -117,6 +117,13 @@ export function AuthProvider({ children }) {
     // onAuthStateChanged will setUser(null) automatically
   }
 
+  // ── update profile ────────────────────────────────────────────────────────
+  async function updateUserProfile(newName) {
+    if (!user) return;
+    await updateDoc(doc(db, 'users', user.uid), { name: newName });
+    setUser(prev => ({ ...prev, name: newName }));
+  }
+
   // ── context value ─────────────────────────────────────────────────────────
   const value = {
     user,
@@ -124,6 +131,7 @@ export function AuthProvider({ children }) {
     login,
     register,
     logout,
+    updateUserProfile,
   };
 
   return (
