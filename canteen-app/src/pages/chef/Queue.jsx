@@ -112,11 +112,11 @@ function OrderCard({ order, overrideOpenIds, setOverrideOpenIds }) {
 
       <motion.div layout="position" style={{ display: 'flex', justifyContent: 'space-between', background: '#E1F5EE', borderRadius: '8px', padding: '12px', marginBottom: '16px' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <span style={{ fontSize: '11px', fontWeight: 700, color: '#085041', textTransform: 'uppercase' }}>Expected Pickup</span>
+          <span style={{ fontSize: '11px', fontWeight: 700, color: '#111827', textTransform: 'uppercase' }}>Expected Pickup</span>
           <span style={{ fontSize: '14px', fontFamily: "'Courier New', monospace", fontWeight: 700, color: '#1D9E75' }}>{formatTime(order.pickupTime ?? order.scheduledStart)}</span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-          <span style={{ fontSize: '11px', fontWeight: 700, color: '#085041', textTransform: 'uppercase' }}>Start Prep</span>
+          <span style={{ fontSize: '11px', fontWeight: 700, color: '#111827', textTransform: 'uppercase' }}>Start Prep</span>
           <span style={{ fontSize: '14px', fontFamily: "'Courier New', monospace", fontWeight: 700, color: '#1D9E75' }}>{formatTime(order.startPrepAt ?? order.scheduledStart)}</span>
         </div>
       </motion.div>

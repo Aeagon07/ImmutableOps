@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 const STATUS_CONFIG = {
   queued:    { bg: '#E6F1FB', color: '#185FA5', border: '#BFDBFE', label: 'Queued', icon: Clock },
   preparing: { bg: '#FAEEDA', color: '#854F0B', border: '#FCD38A', label: 'Preparing', icon: ChefHat },
-  ready:     { bg: '#E1F5EE', color: '#085041', border: '#5DCAA5', label: 'Ready', icon: CheckCircle2 },
+  ready:     { bg: '#E1F5EE', color: '#111827', border: '#5DCAA5', label: 'Ready', icon: CheckCircle2 },
   done:      { bg: '#F3F4F6', color: '#6B7280', border: '#D1D5DB', label: 'Done', icon: Check },
   urgent:    { bg: '#FCEBEB', color: '#A32D2D', border: '#FCA5A5', label: 'Urgent', icon: AlertTriangle },
   high:      { bg: '#FAEEDA', color: '#854F0B', border: '#FCD38A', label: 'High', icon: AlertCircle },

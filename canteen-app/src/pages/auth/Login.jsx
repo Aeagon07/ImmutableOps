@@ -2,11 +2,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Coffee, Mail, Lock, LogIn, AlertCircle } from 'lucide-react';
+import { Coffee, Mail, Lock, LogIn, AlertCircle, User, Shield, UserPlus } from 'lucide-react';
 
 export default function Login() {
-  const { login } = useAuth();
+  const { login, register } = useAuth();
   const navigate = useNavigate();
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [name, setName] = useState('');
+  const [role, setRole] = useState('student');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -18,11 +21,16 @@ export default function Login() {
     setError('');
     setLoading(true);
     try {
-      await login(email, password);
-      setTimeout(() => navigate('/student/menu'), 500);
+      if (isRegistering) {
+        await register(email, password, name, role);
+        setTimeout(() => navigate(role === 'chef' ? '/chef/queue' : '/student/menu'), 500);
+      } else {
+        await login(email, password);
+        setTimeout(() => navigate('/student/menu'), 500);
+      }
     } catch (err) {
       console.error(err);
-      setError('Failed to log in. Check your credentials.');
+      setError(`Failed to ${isRegistering ? 'register' : 'log in'}. Check your details.`);
       setLoading(false);
     }
   }
@@ -33,7 +41,6 @@ export default function Login() {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#F5F7F6',
-    fontFamily: "'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
     position: 'relative',
     overflow: 'hidden'
   };
@@ -71,7 +78,6 @@ export default function Login() {
 
   return (
     <div style={containerStyle}>
-      {/* Decorative background blobs */}
       <motion.div 
         animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
         transition={{ duration: 15, repeat: Infinity, repeatType: 'reverse' }}
@@ -102,23 +108,19 @@ export default function Login() {
           </span>
         </div>
         
-        <h1 style={titleStyle}>Welcome Back</h1>
+        <h1 style={titleStyle}>{isRegistering ? 'Create an Account' : 'Welcome Back'}</h1>
         <p style={{ textAlign: 'center', color: '#6B7280', fontSize: '13px', marginBottom: '24px' }}>
-          Sign in to skip the queue and enjoy your food.
+          {isRegistering ? 'Join the community and enjoy our food.' : 'Select your portal to explore the features.'}
         </p>
+
+        {!isRegistering && (
+          <div style={{ marginBottom: '24px' }} />
+        )}
         
         <AnimatePresence>
           {error && (
-            <motion.div 
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              style={{ overflow: 'hidden', marginBottom: '16px' }}
-            >
-              <div style={{
-                background: '#FCEBEB', color: '#A32D2D', padding: '12px', borderRadius: '8px', 
-                fontSize: '13px', border: '1px solid #FECACA', display: 'flex', alignItems: 'flex-start', gap: '8px'
-              }}>
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} style={{ overflow: 'hidden', marginBottom: '16px' }}>
+              <div style={{ background: '#FCEBEB', color: '#A32D2D', padding: '12px', borderRadius: '8px', fontSize: '13px', border: '1px solid #FECACA', display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
                 <AlertCircle size={16} strokeWidth={2.5} style={{ flexShrink: 0, marginTop: '2px' }}/>
                 {error}
               </div>
@@ -127,76 +129,71 @@ export default function Login() {
         </AnimatePresence>
 
         <form onSubmit={handleSubmit}>
+          
+          <AnimatePresence>
+            {isRegistering && (
+              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
+                <div style={{ marginBottom: '16px' }}>
+                  <label style={labelStyle}>Full Name</label>
+                  <div style={{ position: 'relative' }}>
+                    <div style={{ position: 'absolute', top: '12px', left: '12px', color: focused === 'name' ? '#1D9E75' : '#9CA3AF', transition: 'color 0.2s' }}><User size={18} /></div>
+                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} onFocus={() => setFocused('name')} onBlur={() => setFocused('')} style={{ width: '100%', boxSizing: 'border-box', padding: '12px 14px 12px 40px', border: `1.5px solid ${focused === 'name' ? '#1D9E75' : '#E5E7EB'}`, borderRadius: '10px', fontSize: '14px', color: '#111827', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s', boxShadow: focused === 'name' ? '0 0 0 3px rgba(29,158,117,0.15)' : 'none' }} required={isRegistering} />
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: '16px' }}>
+                  <label style={labelStyle}>Select Role</label>
+                  <div style={{ position: 'relative' }}>
+                    <div style={{ position: 'absolute', top: '12px', left: '12px', color: focused === 'role' ? '#1D9E75' : '#9CA3AF', transition: 'color 0.2s' }}><Shield size={18} /></div>
+                    <select value={role} onChange={e => setRole(e.target.value)} onFocus={() => setFocused('role')} onBlur={() => setFocused('')} style={{ width: '100%', boxSizing: 'border-box', padding: '12px 14px 12px 40px', border: `1.5px solid ${focused === 'role' ? '#1D9E75' : '#E5E7EB'}`, borderRadius: '10px', fontSize: '14px', color: '#111827', outline: 'none', background: '#fff', appearance: 'none', cursor: 'pointer' }}>
+                      <option value="student">Student</option>
+                      <option value="chef">Chef / Kitchen Staff</option>
+                    </select>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <div style={{ marginBottom: '16px' }}>
             <label style={labelStyle}>Email Address</label>
             <div style={{ position: 'relative' }}>
-              <div style={{ position: 'absolute', top: '12px', left: '12px', color: focused === 'email' ? '#1D9E75' : '#9CA3AF', transition: 'color 0.2s' }}>
-                <Mail size={18} />
-              </div>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onFocus={() => setFocused('email')}
-                onBlur={() => setFocused('')}
-                style={{
-                  width: '100%', boxSizing: 'border-box', padding: '12px 14px 12px 40px',
-                  border: `1.5px solid ${focused === 'email' ? '#1D9E75' : '#E5E7EB'}`,
-                  borderRadius: '10px', fontSize: '14px', color: '#111827', outline: 'none',
-                  transition: 'border-color 0.2s, box-shadow 0.2s',
-                  boxShadow: focused === 'email' ? '0 0 0 3px rgba(29,158,117,0.15)' : 'none'
-                }}
-                required
-              />
+              <div style={{ position: 'absolute', top: '12px', left: '12px', color: focused === 'email' ? '#1D9E75' : '#9CA3AF', transition: 'color 0.2s' }}><Mail size={18} /></div>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} onFocus={() => setFocused('email')} onBlur={() => setFocused('')} style={{ width: '100%', boxSizing: 'border-box', padding: '12px 14px 12px 40px', border: `1.5px solid ${focused === 'email' ? '#1D9E75' : '#E5E7EB'}`, borderRadius: '10px', fontSize: '14px', color: '#111827', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s', boxShadow: focused === 'email' ? '0 0 0 3px rgba(29,158,117,0.15)' : 'none' }} required />
             </div>
           </div>
+
           <div style={{ marginBottom: '24px' }}>
             <label style={labelStyle}>Password</label>
             <div style={{ position: 'relative' }}>
-              <div style={{ position: 'absolute', top: '12px', left: '12px', color: focused === 'password' ? '#1D9E75' : '#9CA3AF', transition: 'color 0.2s' }}>
-                <Lock size={18} />
-              </div>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onFocus={() => setFocused('password')}
-                onBlur={() => setFocused('')}
-                style={{
-                  width: '100%', boxSizing: 'border-box', padding: '12px 14px 12px 40px',
-                  border: `1.5px solid ${focused === 'password' ? '#1D9E75' : '#E5E7EB'}`,
-                  borderRadius: '10px', fontSize: '14px', color: '#111827', outline: 'none',
-                  transition: 'border-color 0.2s, box-shadow 0.2s',
-                  boxShadow: focused === 'password' ? '0 0 0 3px rgba(29,158,117,0.15)' : 'none'
-                }}
-                required
-              />
+              <div style={{ position: 'absolute', top: '12px', left: '12px', color: focused === 'password' ? '#1D9E75' : '#9CA3AF', transition: 'color 0.2s' }}><Lock size={18} /></div>
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} onFocus={() => setFocused('password')} onBlur={() => setFocused('')} style={{ width: '100%', boxSizing: 'border-box', padding: '12px 14px 12px 40px', border: `1.5px solid ${focused === 'password' ? '#1D9E75' : '#E5E7EB'}`, borderRadius: '10px', fontSize: '14px', color: '#111827', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s', boxShadow: focused === 'password' ? '0 0 0 3px rgba(29,158,117,0.15)' : 'none' }} required minLength="6" />
             </div>
           </div>
           
           <motion.button 
             whileHover={{ scale: loading ? 1 : 1.02 }}
             whileTap={{ scale: loading ? 1 : 0.98 }}
-            type="submit" 
-            disabled={loading}
-            style={{
-              background: '#1D9E75', color: '#fff', border: 'none', borderRadius: '10px',
-              padding: '12px 20px', fontSize: '14px', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer',
-              width: '100%', opacity: loading ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
-            }}
+            type="submit" disabled={loading}
+            style={{ background: '#1D9E75', color: '#fff', border: 'none', borderRadius: '10px', padding: '14px 20px', fontSize: '15px', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', width: '100%', opacity: loading ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
           >
-            {loading ? (
-              <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}>
-                <Loader size={18} />
-              </motion.div>
-            ) : (
-              <>
-                <LogIn size={18} />
-                Sign In Securely
-              </>
+            {loading ? <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}><Loader size={18} /></motion.div> : (
+              <>{isRegistering ? <UserPlus size={18} /> : <LogIn size={18} />} {isRegistering ? 'Create Account' : 'Sign In Securely'}</>
             )}
           </motion.button>
+
         </form>
+
+        <div style={{ marginTop: '24px', textAlign: 'center' }}>
+          <button 
+            type="button" 
+            onClick={() => { setIsRegistering(!isRegistering); setError(''); setEmail(''); setPassword(''); setName(''); }} 
+            style={{ background: 'transparent', border: 'none', color: '#6B7280', fontSize: '13px', fontWeight: 600, cursor: 'pointer', outline: 'none' }}
+          >
+            {isRegistering ? 'Already have an account? Sign In' : "Don't have an account? Register"}
+          </button>
+        </div>
+
       </motion.div>
     </div>
   );

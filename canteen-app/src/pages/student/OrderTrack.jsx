@@ -103,11 +103,11 @@ function OrderCard({ order }) {
       <AnimatePresence>
         {order.startDisplay && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ background: '#E1F5EE', border: '1px solid #5DCAA5', borderRadius: '12px', padding: '12px 16px', marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '8px', alignItems: 'center' }}>
-            <div style={{ fontSize: '13px', fontWeight: 700, color: '#085041', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ fontSize: '13px', fontWeight: 700, color: '#111827', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Coffee size={14} strokeWidth={3} /> Prep starts at: <span style={{ fontFamily: "'Courier New', monospace" }}>{order.startDisplay}</span>
               {order.prepEstimate && <span style={{ color: '#1D9E75', fontWeight: 600, marginLeft: '4px', fontSize: '11px' }}>(~{order.prepEstimate}m)</span>}
             </div>
-            {order.aiReason && <div style={{ fontSize: '11px', color: '#085041', fontWeight: 500, width: '100%', opacity: 0.8 }}>{order.aiReason}</div>}
+            {order.aiReason && <div style={{ fontSize: '11px', color: '#111827', fontWeight: 500, width: '100%', opacity: 0.8 }}>{order.aiReason}</div>}
           </motion.div>
         )}
 

@@ -122,7 +122,7 @@ export default function Menu() {
           <p style={{ fontSize: '16px', color: '#6B7280', margin: '0 0 32px 0', fontWeight: 600 }}>Explore our massive culinary catalog 🌱</p>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} style={{ background: 'linear-gradient(135deg, #1D9E75 0%, #085041 100%)', borderRadius: '24px', padding: '24px', marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '20px', color: '#fff', boxShadow: '0 10px 30px rgba(29,158,117,0.2)' }}>
+        <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} style={{ background: 'linear-gradient(135deg, #1D9E75 0%, #111827 100%)', borderRadius: '24px', padding: '24px', marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '20px', color: '#fff', boxShadow: '0 10px 30px rgba(29,158,117,0.2)' }}>
           <div style={{ background: 'rgba(255,255,255,0.2)', padding: '16px', borderRadius: '16px' }}><SlotIcon size={32} strokeWidth={2.5} /></div>
           <div>
             <div style={{ fontWeight: 800, fontSize: '20px', marginBottom: '4px' }}>{timeSlot.label}</div>

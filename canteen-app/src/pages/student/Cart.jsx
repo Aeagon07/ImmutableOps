@@ -77,7 +77,7 @@ export default function Cart() {
 
         <AnimatePresence>
           {successMsg && (
-            <motion.div initial={{ opacity: 0, y: -20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} style={{ padding: '16px', background: '#E1F5EE', border: '1px solid #5DCAA5', color: '#085041', borderRadius: '16px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px', boxShadow: '0 4px 12px rgba(29,158,117,0.1)' }}>
+            <motion.div initial={{ opacity: 0, y: -20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} style={{ padding: '16px', background: '#E1F5EE', border: '1px solid #5DCAA5', color: '#111827', borderRadius: '16px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px', boxShadow: '0 4px 12px rgba(29,158,117,0.1)' }}>
               <div style={{ background: '#1D9E75', color: '#fff', borderRadius: '50%', padding: '4px' }}><CheckCircle2 size={24} /></div>
               <div style={{ fontWeight: 600, fontSize: '14px' }}>{successMsg}</div>
             </motion.div>

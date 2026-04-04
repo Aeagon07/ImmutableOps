@@ -45,7 +45,7 @@ export default function UserList() {
   const getRoleBadgeColor = (role) => {
     if (role === 'admin') return { bg: '#EDE9FE', color: '#7C3AED' };
     if (role === 'chef') return { bg: '#FAEEDA', color: '#854F0B' };
-    return { bg: '#E1F5EE', color: '#085041' };
+    return { bg: '#E1F5EE', color: '#111827' };
   };
 
   return (

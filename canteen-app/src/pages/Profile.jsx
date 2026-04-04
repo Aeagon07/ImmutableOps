@@ -112,7 +112,7 @@ export default function Profile() {
               </div>
             </div>
             
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#E1F5EE', color: '#085041', padding: '8px 16px', borderRadius: '20px', fontSize: '13px', fontWeight: 700, textTransform: 'uppercase' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#E1F5EE', color: '#111827', padding: '8px 16px', borderRadius: '20px', fontSize: '13px', fontWeight: 700, textTransform: 'uppercase' }}>
               <Shield size={16} /> Role: {user.role}
             </div>
           </div>
