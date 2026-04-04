@@ -41,7 +41,7 @@ export default function WorkloadPanel() {
   }
 
   const loadPercentage = Math.min(100, Math.round((activeOrders.length / (canteenSettings.maxConcurrentOrders || 6)) * 100));
-  const loadColor = loadPercentage >= 100 ? '#A32D2D' : loadPercentage > 75 ? '#BA7517' : '#1D9E75';
+  const loadColor = loadPercentage >= 100 ? '#A32D2D' : loadPercentage > 75 ? '#BA7517' : '#FC8019';
 
   return (
     <div style={{ paddingBottom: '80px' }}>
@@ -93,7 +93,7 @@ export default function WorkloadPanel() {
                 <div style={{ fontSize: '15px', fontWeight: 700, color: '#111827', marginBottom: '4px' }}>Accept New Orders</div>
                 <div style={{ fontSize: '13px', color: '#6B7280', fontWeight: 500 }}>Toggle canteen open/close status</div>
               </div>
-              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={toggleCanteenOpen} style={{ background: canteenSettings.isOpen ? '#FCEBEB' : '#E1F5EE', color: canteenSettings.isOpen ? '#A32D2D' : '#1D9E75', border: canteenSettings.isOpen ? '2px solid #FCA5A5' : '2px solid #5DCAA5', borderRadius: '10px', padding: '10px 16px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={toggleCanteenOpen} style={{ background: canteenSettings.isOpen ? '#FCEBEB' : '#FFF0E5', color: canteenSettings.isOpen ? '#A32D2D' : '#FC8019', border: canteenSettings.isOpen ? '2px solid #FCA5A5' : '2px solid #FDBA74', borderRadius: '10px', padding: '10px 16px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 {canteenSettings.isOpen ? <><PowerOff size={16} /> Close Canteen</> : <><Power size={16} /> Open Canteen</>}
               </motion.button>
            </div>

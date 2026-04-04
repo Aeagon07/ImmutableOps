@@ -44,7 +44,7 @@ export default function CountdownTimer({ pickupTimeISO, status }) {
         exit={{ opacity: 0, scale: 0.95 }}
         style={{
           background: isLate ? '#FCEBEB' : '#FFFFFF',
-          color: isLate ? '#A32D2D' : '#1D9E75',
+          color: isLate ? '#A32D2D' : '#FC8019',
           border: `1px solid ${isLate ? '#FCA5A5' : '#E5E7EB'}`,
           borderRadius: '8px',
           padding: '8px 12px',

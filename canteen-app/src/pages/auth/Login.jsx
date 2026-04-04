@@ -81,7 +81,7 @@ export default function Login() {
       <motion.div 
         animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
         transition={{ duration: 15, repeat: Infinity, repeatType: 'reverse' }}
-        style={{ position: 'absolute', top: '-10%', left: '-5%', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(29,158,117,0.15) 0%, rgba(255,255,255,0) 70%)', borderRadius: '50%' }}
+        style={{ position: 'absolute', top: '-10%', left: '-5%', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(252,128,25,0.15) 0%, rgba(255,255,255,0) 70%)', borderRadius: '50%' }}
       />
       <motion.div 
         animate={{ scale: [1, 1.2, 1], rotate: [0, -10, 10, 0] }}
@@ -99,11 +99,11 @@ export default function Login() {
           <motion.div
             whileHover={{ rotate: 10, scale: 1.1 }}
             transition={{ type: "spring", stiffness: 300 }}
-            style={{ background: '#E1F5EE', padding: '16px', borderRadius: '50%', marginBottom: '16px', color: '#1D9E75' }}
+            style={{ background: '#FFF0E5', padding: '16px', borderRadius: '50%', marginBottom: '16px', color: '#FC8019' }}
           >
             <Coffee size={36} strokeWidth={2.5} />
           </motion.div>
-          <span style={{ fontSize: '28px', fontWeight: 800, color: '#1D9E75', letterSpacing: '-0.5px' }}>
+          <span style={{ fontSize: '28px', fontWeight: 800, color: '#FC8019', letterSpacing: '-0.5px' }}>
             CaféSync
           </span>
         </div>
@@ -136,16 +136,16 @@ export default function Login() {
                 <div style={{ marginBottom: '16px' }}>
                   <label style={labelStyle}>Full Name</label>
                   <div style={{ position: 'relative' }}>
-                    <div style={{ position: 'absolute', top: '12px', left: '12px', color: focused === 'name' ? '#1D9E75' : '#9CA3AF', transition: 'color 0.2s' }}><User size={18} /></div>
-                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} onFocus={() => setFocused('name')} onBlur={() => setFocused('')} style={{ width: '100%', boxSizing: 'border-box', padding: '12px 14px 12px 40px', border: `1.5px solid ${focused === 'name' ? '#1D9E75' : '#E5E7EB'}`, borderRadius: '10px', fontSize: '14px', color: '#111827', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s', boxShadow: focused === 'name' ? '0 0 0 3px rgba(29,158,117,0.15)' : 'none' }} required={isRegistering} />
+                    <div style={{ position: 'absolute', top: '12px', left: '12px', color: focused === 'name' ? '#FC8019' : '#9CA3AF', transition: 'color 0.2s' }}><User size={18} /></div>
+                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} onFocus={() => setFocused('name')} onBlur={() => setFocused('')} style={{ width: '100%', boxSizing: 'border-box', padding: '12px 14px 12px 40px', border: `1.5px solid ${focused === 'name' ? '#FC8019' : '#E5E7EB'}`, borderRadius: '10px', fontSize: '14px', color: '#111827', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s', boxShadow: focused === 'name' ? '0 0 0 3px rgba(252,128,25,0.15)' : 'none' }} required={isRegistering} />
                   </div>
                 </div>
 
                 <div style={{ marginBottom: '16px' }}>
                   <label style={labelStyle}>Select Role</label>
                   <div style={{ position: 'relative' }}>
-                    <div style={{ position: 'absolute', top: '12px', left: '12px', color: focused === 'role' ? '#1D9E75' : '#9CA3AF', transition: 'color 0.2s' }}><Shield size={18} /></div>
-                    <select value={role} onChange={e => setRole(e.target.value)} onFocus={() => setFocused('role')} onBlur={() => setFocused('')} style={{ width: '100%', boxSizing: 'border-box', padding: '12px 14px 12px 40px', border: `1.5px solid ${focused === 'role' ? '#1D9E75' : '#E5E7EB'}`, borderRadius: '10px', fontSize: '14px', color: '#111827', outline: 'none', background: '#fff', appearance: 'none', cursor: 'pointer' }}>
+                    <div style={{ position: 'absolute', top: '12px', left: '12px', color: focused === 'role' ? '#FC8019' : '#9CA3AF', transition: 'color 0.2s' }}><Shield size={18} /></div>
+                    <select value={role} onChange={e => setRole(e.target.value)} onFocus={() => setFocused('role')} onBlur={() => setFocused('')} style={{ width: '100%', boxSizing: 'border-box', padding: '12px 14px 12px 40px', border: `1.5px solid ${focused === 'role' ? '#FC8019' : '#E5E7EB'}`, borderRadius: '10px', fontSize: '14px', color: '#111827', outline: 'none', background: '#fff', appearance: 'none', cursor: 'pointer' }}>
                       <option value="student">Student</option>
                       <option value="chef">Chef / Kitchen Staff</option>
                     </select>
@@ -158,16 +158,16 @@ export default function Login() {
           <div style={{ marginBottom: '16px' }}>
             <label style={labelStyle}>Email Address</label>
             <div style={{ position: 'relative' }}>
-              <div style={{ position: 'absolute', top: '12px', left: '12px', color: focused === 'email' ? '#1D9E75' : '#9CA3AF', transition: 'color 0.2s' }}><Mail size={18} /></div>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} onFocus={() => setFocused('email')} onBlur={() => setFocused('')} style={{ width: '100%', boxSizing: 'border-box', padding: '12px 14px 12px 40px', border: `1.5px solid ${focused === 'email' ? '#1D9E75' : '#E5E7EB'}`, borderRadius: '10px', fontSize: '14px', color: '#111827', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s', boxShadow: focused === 'email' ? '0 0 0 3px rgba(29,158,117,0.15)' : 'none' }} required />
+              <div style={{ position: 'absolute', top: '12px', left: '12px', color: focused === 'email' ? '#FC8019' : '#9CA3AF', transition: 'color 0.2s' }}><Mail size={18} /></div>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} onFocus={() => setFocused('email')} onBlur={() => setFocused('')} style={{ width: '100%', boxSizing: 'border-box', padding: '12px 14px 12px 40px', border: `1.5px solid ${focused === 'email' ? '#FC8019' : '#E5E7EB'}`, borderRadius: '10px', fontSize: '14px', color: '#111827', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s', boxShadow: focused === 'email' ? '0 0 0 3px rgba(252,128,25,0.15)' : 'none' }} required />
             </div>
           </div>
 
           <div style={{ marginBottom: '24px' }}>
             <label style={labelStyle}>Password</label>
             <div style={{ position: 'relative' }}>
-              <div style={{ position: 'absolute', top: '12px', left: '12px', color: focused === 'password' ? '#1D9E75' : '#9CA3AF', transition: 'color 0.2s' }}><Lock size={18} /></div>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} onFocus={() => setFocused('password')} onBlur={() => setFocused('')} style={{ width: '100%', boxSizing: 'border-box', padding: '12px 14px 12px 40px', border: `1.5px solid ${focused === 'password' ? '#1D9E75' : '#E5E7EB'}`, borderRadius: '10px', fontSize: '14px', color: '#111827', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s', boxShadow: focused === 'password' ? '0 0 0 3px rgba(29,158,117,0.15)' : 'none' }} required minLength="6" />
+              <div style={{ position: 'absolute', top: '12px', left: '12px', color: focused === 'password' ? '#FC8019' : '#9CA3AF', transition: 'color 0.2s' }}><Lock size={18} /></div>
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} onFocus={() => setFocused('password')} onBlur={() => setFocused('')} style={{ width: '100%', boxSizing: 'border-box', padding: '12px 14px 12px 40px', border: `1.5px solid ${focused === 'password' ? '#FC8019' : '#E5E7EB'}`, borderRadius: '10px', fontSize: '14px', color: '#111827', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s', boxShadow: focused === 'password' ? '0 0 0 3px rgba(252,128,25,0.15)' : 'none' }} required minLength="6" />
             </div>
           </div>
           
@@ -175,7 +175,7 @@ export default function Login() {
             whileHover={{ scale: loading ? 1 : 1.02 }}
             whileTap={{ scale: loading ? 1 : 0.98 }}
             type="submit" disabled={loading}
-            style={{ background: '#1D9E75', color: '#fff', border: 'none', borderRadius: '10px', padding: '14px 20px', fontSize: '15px', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', width: '100%', opacity: loading ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+            style={{ background: '#FC8019', color: '#fff', border: 'none', borderRadius: '10px', padding: '14px 20px', fontSize: '15px', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', width: '100%', opacity: loading ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
           >
             {loading ? <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}><Loader size={18} /></motion.div> : (
               <>{isRegistering ? <UserPlus size={18} /> : <LogIn size={18} />} {isRegistering ? 'Create Account' : 'Sign In Securely'}</>

@@ -27,8 +27,8 @@ function sortOrders(orders) {
 
 function ActionButton({ label, type = 'primary', icon: Icon, onClick, disabled }) {
   let baseStyle = { borderRadius: '10px', padding: '10px 20px', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px', cursor: disabled ? 'not-allowed' : 'pointer', border: 'none', width: '100%', justifyContent: 'center' };
-  if (type === 'primary') Object.assign(baseStyle, { background: '#1D9E75', color: '#fff' });
-  else if (type === 'secondary') Object.assign(baseStyle, { background: 'transparent', color: '#1D9E75', border: '2px solid #1D9E75' });
+  if (type === 'primary') Object.assign(baseStyle, { background: '#FC8019', color: '#fff' });
+  else if (type === 'secondary') Object.assign(baseStyle, { background: 'transparent', color: '#FC8019', border: '2px solid #FC8019' });
   else if (type === 'danger') Object.assign(baseStyle, { background: '#FCEBEB', color: '#A32D2D' });
 
   return (
@@ -40,19 +40,18 @@ function ActionButton({ label, type = 'primary', icon: Icon, onClick, disabled }
 
 function OverridePanel({ orderId, currentPriority }) {
   const [selected, setSelected] = useState(currentPriority ?? 'normal');
-  const [note, setNote] = useState('');
   const [saving, setSaving] = useState(false);
   const priorities = ['normal', 'high', 'urgent'];
 
   async function applyOverride() {
     setSaving(true);
-    try { await updateDoc(doc(db, 'orders', orderId), { priority: selected, manualPriorityOverride: true, overrideNote: note }); } 
+    try { await updateDoc(doc(db, 'orders', orderId), { priority: selected, manualPriorityOverride: true }); } 
     catch (e) { console.error(e); }
     setSaving(false);
   }
   async function clearOverride() {
     setSaving(true);
-    try { await updateDoc(doc(db, 'orders', orderId), { manualPriorityOverride: false, overrideNote: '' }); } 
+    try { await updateDoc(doc(db, 'orders', orderId), { manualPriorityOverride: false }); } 
     catch (e) { console.error(e); }
     setSaving(false);
   }
@@ -65,14 +64,13 @@ function OverridePanel({ orderId, currentPriority }) {
           return (
             <motion.label whileTap={{ scale: 0.95 }} key={p} style={{ cursor: 'pointer', flex: 1 }}>
               <input type="radio" value={p} checked={selected === p} onChange={() => setSelected(p)} style={{ display: 'none' }} />
-              <div style={{ textAlign: 'center', padding: '8px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, border: active ? 'none' : '1px solid #E5E7EB', background: active ? '#1D9E75' : '#FFFFFF', color: active ? '#fff' : '#374151', transition: 'all 0.2s' }}>
+              <div style={{ textAlign: 'center', padding: '8px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, border: active ? 'none' : '1px solid #E5E7EB', background: active ? '#FC8019' : '#FFFFFF', color: active ? '#fff' : '#374151', transition: 'all 0.2s' }}>
                 {p.charAt(0).toUpperCase() + p.slice(1)}
               </div>
             </motion.label>
           );
         })}
       </div>
-      <input type="text" placeholder="Note for chef team" maxLength={100} value={note} onChange={e => setNote(e.target.value)} style={{ width: '100%', boxSizing: 'border-box', border: '1px solid #E5E7EB', borderRadius: '8px', padding: '10px 14px', fontSize: '13px', outline: 'none', marginBottom: '16px', fontWeight: 500 }} />
       <div style={{ display: 'flex', gap: '10px' }}>
         <ActionButton label="Apply Override" type="primary" icon={Check} onClick={applyOverride} disabled={saving} />
         <ActionButton label="Clear" type="danger" icon={X} onClick={clearOverride} disabled={saving} />
@@ -110,14 +108,21 @@ function OrderCard({ order, overrideOpenIds, setOverrideOpenIds }) {
         {order.items?.map(i => `${i.qty}x ${i.name}`).join(', ') || 'No items'}
       </motion.div>
 
-      <motion.div layout="position" style={{ display: 'flex', justifyContent: 'space-between', background: '#E1F5EE', borderRadius: '8px', padding: '12px', marginBottom: '16px' }}>
+      {order.note && (
+        <motion.div layout="position" style={{ fontSize: '13px', color: '#B45309', background: '#FEF3C7', padding: '10px 14px', borderRadius: '8px', marginBottom: '16px', fontWeight: 600 }}>
+          <span style={{textTransform: 'uppercase', fontSize: '11px', display: 'block', marginBottom: '4px', color: '#D97706'}}>Student Note</span>
+          {order.note}
+        </motion.div>
+      )}
+
+      <motion.div layout="position" style={{ display: 'flex', justifyContent: 'space-between', background: '#FFF0E5', borderRadius: '8px', padding: '12px', marginBottom: '16px' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <span style={{ fontSize: '11px', fontWeight: 700, color: '#111827', textTransform: 'uppercase' }}>Expected Pickup</span>
-          <span style={{ fontSize: '14px', fontFamily: "'Courier New', monospace", fontWeight: 700, color: '#1D9E75' }}>{formatTime(order.pickupTime ?? order.scheduledStart)}</span>
+          <span style={{ fontSize: '14px', fontFamily: "'Courier New', monospace", fontWeight: 700, color: '#FC8019' }}>{formatTime(order.pickupTime ?? order.scheduledStart)}</span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
           <span style={{ fontSize: '11px', fontWeight: 700, color: '#111827', textTransform: 'uppercase' }}>Start Prep</span>
-          <span style={{ fontSize: '14px', fontFamily: "'Courier New', monospace", fontWeight: 700, color: '#1D9E75' }}>{formatTime(order.startPrepAt ?? order.scheduledStart)}</span>
+          <span style={{ fontSize: '14px', fontFamily: "'Courier New', monospace", fontWeight: 700, color: '#FC8019' }}>{formatTime(order.startPrepAt ?? order.scheduledStart)}</span>
         </div>
       </motion.div>
 
@@ -160,8 +165,8 @@ export default function Queue() {
       <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '32px 24px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
           <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#111827', margin: 0, display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <ChefHat color="#1D9E75" size={32} /> Active Queue
-            <motion.div animate={{ scale: pulseActive ? [1, 1.5, 1] : 1, backgroundColor: pulseActive ? ['#A32D2D', '#1D9E75'] : '#1D9E75' }} transition={{ duration: 0.5 }} style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#1D9E75', marginLeft: '4px' }} />
+            <ChefHat color="#FC8019" size={32} /> Active Queue
+            <motion.div animate={{ scale: pulseActive ? [1, 1.5, 1] : 1, backgroundColor: pulseActive ? ['#A32D2D', '#FC8019'] : '#FC8019' }} transition={{ duration: 0.5 }} style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#FC8019', marginLeft: '4px' }} />
           </h1>
           <div style={{ background: '#111827', color: '#fff', padding: '8px 16px', borderRadius: '20px', fontSize: '14px', fontWeight: 700 }}>
             {orders.length} Active Orders

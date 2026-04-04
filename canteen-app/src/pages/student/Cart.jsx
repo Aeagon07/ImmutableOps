@@ -27,6 +27,7 @@ export default function Cart() {
   const initialTime = `${initialDate.getHours().toString().padStart(2, '0')}:${initialDate.getMinutes().toString().padStart(2, '0')}`;
   const [timeValue, setTimeValue] = useState(initialTime);
 
+  const [note, setNote] = useState('');
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
 
@@ -53,7 +54,8 @@ export default function Cart() {
         items: cartItems, totalPrice, pickupTime: pickupTimeISO, pickupTimeDisplay: formatTime(new Date(pickupTimeISO)),
         status: 'queued', scheduledStart: schedule.scheduledStart, startDisplay: schedule.startDisplay,
         prepEstimate: schedule.prepEstimate, aiReason: schedule.breakdown, priority: 'normal',
-        delayFlag: false, manualPriorityOverride: false, overrideNote: '', createdAt: serverTimestamp()
+        delayFlag: false, manualPriorityOverride: false, overrideNote: '', 
+        note: note.trim(), createdAt: serverTimestamp()
       };
 
       const ref = await addDoc(collection(db, 'orders'), orderData);
@@ -72,13 +74,13 @@ export default function Cart() {
     <div style={{ paddingBottom: '90px' }}>
       <main style={{ padding: '32px 24px', maxWidth: '800px', margin: '0 auto' }}>
         <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#111827', margin: '0 0 24px 0', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <ShoppingBag size={24} color="#1D9E75" /> Checkout
+          <ShoppingBag size={24} color="#FC8019" /> Checkout
         </h1>
 
         <AnimatePresence>
           {successMsg && (
-            <motion.div initial={{ opacity: 0, y: -20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} style={{ padding: '16px', background: '#E1F5EE', border: '1px solid #5DCAA5', color: '#111827', borderRadius: '16px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px', boxShadow: '0 4px 12px rgba(29,158,117,0.1)' }}>
-              <div style={{ background: '#1D9E75', color: '#fff', borderRadius: '50%', padding: '4px' }}><CheckCircle2 size={24} /></div>
+            <motion.div initial={{ opacity: 0, y: -20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} style={{ padding: '16px', background: '#FFF0E5', border: '1px solid #FDBA74', color: '#111827', borderRadius: '16px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px', boxShadow: '0 4px 12px rgba(252,128,25,0.1)' }}>
+              <div style={{ background: '#FC8019', color: '#fff', borderRadius: '50%', padding: '4px' }}><CheckCircle2 size={24} /></div>
               <div style={{ fontWeight: 600, fontSize: '14px' }}>{successMsg}</div>
             </motion.div>
           )}
@@ -101,9 +103,20 @@ export default function Cart() {
                 </div>
               ))}
             </div>
+            <div style={{ marginTop: '24px' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#111827', marginBottom: '8px' }}>Add a Note for the Chef</label>
+              <textarea 
+                placeholder="Any special instructions?" 
+                value={note} 
+                onChange={e => setNote(e.target.value)} 
+                maxLength={100}
+                style={{ width: '100%', boxSizing: 'border-box', border: '1px solid #E5E7EB', borderRadius: '12px', padding: '12px', fontSize: '13px', outline: 'none', resize: 'none', minHeight: '60px', fontFamily: 'inherit', fontWeight: 500 }} 
+              />
+            </div>
+
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '24px', paddingTop: '20px', borderTop: '2px dashed #E5E7EB' }}>
               <span style={{ fontSize: '16px', fontWeight: 800, color: '#111827' }}>Total to pay</span>
-              <span style={{ fontSize: '24px', fontWeight: 800, color: '#1D9E75', fontFamily: "'Courier New', monospace" }}>₹{totalPrice}</span>
+              <span style={{ fontSize: '24px', fontWeight: 800, color: '#FC8019', fontFamily: "'Courier New', monospace" }}>₹{totalPrice}</span>
             </div>
           </motion.div>
 
@@ -116,8 +129,8 @@ export default function Cart() {
               </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', padding: '16px', borderRadius: '12px', border: `2px solid ${pickupOption === 'A' ? '#1D9E75' : '#E5E7EB'}`, background: pickupOption === 'A' ? '#E1F5EE' : '#FFFFFF', cursor: 'pointer', transition: 'all 0.2s' }}>
-                  <input type="radio" value="A" checked={pickupOption === 'A'} onChange={() => setPickupOption('A')} style={{ marginRight: '12px', accentColor: '#1D9E75' }} />
+                <label style={{ display: 'flex', alignItems: 'center', padding: '16px', borderRadius: '12px', border: `2px solid ${pickupOption === 'A' ? '#FC8019' : '#E5E7EB'}`, background: pickupOption === 'A' ? '#FFF0E5' : '#FFFFFF', cursor: 'pointer', transition: 'all 0.2s' }}>
+                  <input type="radio" value="A" checked={pickupOption === 'A'} onChange={() => setPickupOption('A')} style={{ marginRight: '12px', accentColor: '#FC8019' }} />
                   <span style={{ fontSize: '14px', fontWeight: 600, color: '#111827', flex: 1 }}>Arriving in</span>
                   <input type="number" min="1" max="120" value={minutes} onChange={e => setMinutes(Number(e.target.value) || 1)} disabled={pickupOption !== 'A'} style={{ width: '60px', padding: '8px', borderRadius: '8px', border: '1px solid #D1D5DB', fontSize: '15px', fontWeight: 700, fontFamily: "'Courier New', monospace", textAlign: 'center', background: '#fff' }} onClick={e => e.stopPropagation()} />
                   <span style={{ fontSize: '14px', marginLeft: '8px', color: '#6B7280', fontWeight: 600 }}>min</span>
@@ -136,7 +149,7 @@ export default function Cart() {
               whileTap={{ scale: (loading || successMsg) ? 1 : 0.98 }}
               onClick={placeOrder} 
               disabled={loading || !!successMsg}
-              style={{ width: '100%', padding: '18px', background: '#1D9E75', color: '#fff', border: 'none', borderRadius: '16px', fontSize: '16px', fontWeight: 800, cursor: loading || successMsg ? 'not-allowed' : 'pointer', opacity: (loading || successMsg) ? 0.7 : 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', boxShadow: '0 8px 20px rgba(29,158,117,0.25)' }}
+              style={{ width: '100%', padding: '18px', background: '#FC8019', color: '#fff', border: 'none', borderRadius: '16px', fontSize: '16px', fontWeight: 800, cursor: loading || successMsg ? 'not-allowed' : 'pointer', opacity: (loading || successMsg) ? 0.7 : 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', boxShadow: '0 8px 20px rgba(252,128,25,0.25)' }}
             >
               <CreditCard size={20} />
               {loading ? 'Confirming...' : successMsg ? 'Placed Successfully!' : `Pay ₹${totalPrice} at Counter`}

@@ -26,7 +26,7 @@ function CategoryFilters({ categories, active, onChange }) {
             onClick={() => onChange(cat)}
             style={{ position: 'relative', padding: '10px 24px', borderRadius: '30px', border: 'none', background: 'transparent', color: isActive ? '#fff' : '#6B7280', fontWeight: 700, fontSize: '14px', cursor: 'pointer', outline: 'none', zIndex: 1 }}
           >
-            {isActive && <motion.div layoutId="activeCat" style={{ position: 'absolute', inset: 0, background: '#1D9E75', borderRadius: '30px', zIndex: -1, boxShadow: '0 4px 12px rgba(29,158,117,0.3)' }} transition={{ type: "spring", stiffness: 500, damping: 30 }} />}
+            {isActive && <motion.div layoutId="activeCat" style={{ position: 'absolute', inset: 0, background: '#FC8019', borderRadius: '30px', zIndex: -1, boxShadow: '0 4px 12px rgba(252,128,25,0.3)' }} transition={{ type: "spring", stiffness: 500, damping: 30 }} />}
             <span style={{ position: 'relative', zIndex: 1 }}>{cat}</span>
           </button>
         );
@@ -51,17 +51,17 @@ function MenuItemCard({ item, cartEntry, onAdd, onInc, onDec }) {
       <motion.div whileHover={{ scale: 1.1, rotate: 5 }} style={{ fontSize: '56px', textAlign: 'center', marginBottom: '16px', userSelect: 'none' }}>{item.emoji}</motion.div>
       <div style={{ fontSize: '16px', fontWeight: 800, color: '#111827', marginBottom: '8px', textAlign: 'center' }}>{item.name}</div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', background: '#F9FAFB', padding: '8px 12px', borderRadius: '12px' }}>
-        <span style={{ color: '#1D9E75', fontWeight: 800, fontFamily: "'Courier New', monospace", fontSize: '16px' }}>₹{item.price}</span>
+        <span style={{ color: '#FC8019', fontWeight: 800, fontFamily: "'Courier New', monospace", fontSize: '16px' }}>₹{item.price}</span>
         <span style={{ color: '#6B7280', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}><Clock size={14} strokeWidth={3} /> {item.prepTime}m</span>
       </div>
 
       {!cartEntry ? (
-        <motion.button whileHover={{ scale: 1.02, backgroundColor: '#E1F5EE' }} whileTap={{ scale: 0.96 }} onClick={() => onAdd(item)} style={{ background: 'transparent', color: '#1D9E75', border: '2px solid #1D9E75', borderRadius: '12px', padding: '12px', fontSize: '14px', fontWeight: 800, width: '100%', cursor: 'pointer' }}>Add to Cart</motion.button>
+        <motion.button whileHover={{ scale: 1.02, backgroundColor: '#FFF0E5' }} whileTap={{ scale: 0.96 }} onClick={() => onAdd(item)} style={{ background: 'transparent', color: '#FC8019', border: '2px solid #FC8019', borderRadius: '12px', padding: '12px', fontSize: '14px', fontWeight: 800, width: '100%', cursor: 'pointer' }}>Add to Cart</motion.button>
       ) : (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
           <motion.button whileTap={{ scale: 0.9 }} onClick={() => onDec(item.id)} style={{ flex: 1, padding: '12px 0', background: '#FCEBEB', border: 'none', borderRadius: '12px', color: '#A32D2D', cursor: 'pointer', display: 'flex', justifyContent: 'center' }}><Minus size={18} strokeWidth={3} /></motion.button>
           <span style={{ minWidth: '32px', textAlign: 'center', fontWeight: 800, fontSize: '16px', color: '#111827' }}>{cartEntry.qty}</span>
-          <motion.button whileTap={{ scale: 0.9 }} onClick={() => onInc(item.id)} style={{ flex: 1, padding: '12px 0', background: '#1D9E75', border: 'none', borderRadius: '12px', color: '#fff', cursor: 'pointer', display: 'flex', justifyContent: 'center' }}><Plus size={18} strokeWidth={3} /></motion.button>
+          <motion.button whileTap={{ scale: 0.9 }} onClick={() => onInc(item.id)} style={{ flex: 1, padding: '12px 0', background: '#FC8019', border: 'none', borderRadius: '12px', color: '#fff', cursor: 'pointer', display: 'flex', justifyContent: 'center' }}><Plus size={18} strokeWidth={3} /></motion.button>
         </div>
       )}
     </motion.div>
@@ -77,7 +77,7 @@ function CartBottomBar({ cartItems, onCheckout }) {
         <span style={{ fontSize: '14px', fontWeight: 600, color: '#9CA3AF', display: 'flex', alignItems: 'center', gap: '8px' }}><ShoppingCart size={16} strokeWidth={2.5} /> {totalQty} items selected</span>
         <span style={{ fontSize: '20px', color: '#FFFFFF', fontFamily: "'Courier New', monospace", fontWeight: 800 }}>₹{totalPrice}</span>
       </div>
-      <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={onCheckout} style={{ background: '#1D9E75', color: '#fff', border: 'none', borderRadius: '12px', padding: '14px 28px', fontWeight: 700, fontSize: '15px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(29,158,117,0.4)' }}>
+      <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={onCheckout} style={{ background: '#FC8019', color: '#fff', border: 'none', borderRadius: '12px', padding: '14px 28px', fontWeight: 700, fontSize: '15px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(252,128,25,0.4)' }}>
         Proceed to Cart <motion.span animate={{ x: [0, 4, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>→</motion.span>
       </motion.button>
     </motion.div>
@@ -122,7 +122,7 @@ export default function Menu() {
           <p style={{ fontSize: '16px', color: '#6B7280', margin: '0 0 32px 0', fontWeight: 600 }}>Explore our massive culinary catalog 🌱</p>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} style={{ background: 'linear-gradient(135deg, #1D9E75 0%, #111827 100%)', borderRadius: '24px', padding: '24px', marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '20px', color: '#fff', boxShadow: '0 10px 30px rgba(29,158,117,0.2)' }}>
+        <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} style={{ background: 'linear-gradient(135deg, #FC8019 0%, #111827 100%)', borderRadius: '24px', padding: '24px', marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '20px', color: '#fff', boxShadow: '0 10px 30px rgba(252,128,25,0.2)' }}>
           <div style={{ background: 'rgba(255,255,255,0.2)', padding: '16px', borderRadius: '16px' }}><SlotIcon size={32} strokeWidth={2.5} /></div>
           <div>
             <div style={{ fontWeight: 800, fontSize: '20px', marginBottom: '4px' }}>{timeSlot.label}</div>

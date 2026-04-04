@@ -39,13 +39,13 @@ export default function UserList() {
   const getRoleIcon = (role) => {
     if (role === 'admin') return <Shield size={16} color="#7C3AED" />;
     if (role === 'chef') return <ChefHat size={16} color="#BA7517" />;
-    return <User size={16} color="#1D9E75" />;
+    return <User size={16} color="#FC8019" />;
   };
 
   const getRoleBadgeColor = (role) => {
     if (role === 'admin') return { bg: '#EDE9FE', color: '#7C3AED' };
     if (role === 'chef') return { bg: '#FAEEDA', color: '#854F0B' };
-    return { bg: '#E1F5EE', color: '#111827' };
+    return { bg: '#FFF0E5', color: '#111827' };
   };
 
   return (
@@ -57,8 +57,8 @@ export default function UserList() {
             <div style={statTitleStyle}>Total Registered</div>
             <div style={statValStyle}>{roleStats.total}</div>
           </motion.div>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} style={{ ...statCardStyle, borderTop: '4px solid #1D9E75' }}>
-            <div style={{ ...statTitleStyle, color: '#1D9E75' }}>Students</div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} style={{ ...statCardStyle, borderTop: '4px solid #FC8019' }}>
+            <div style={{ ...statTitleStyle, color: '#FC8019' }}>Students</div>
             <div style={statValStyle}>{roleStats.student}</div>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} style={{ ...statCardStyle, borderTop: '4px solid #BA7517' }}>

@@ -46,8 +46,8 @@ export default function Layout() {
     return (
       <>
         <div style={{ padding: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ background: '#E1F5EE', padding: '10px', borderRadius: '12px' }}>
-            <Utensils color="#1D9E75" size={24} strokeWidth={2.5} />
+          <div style={{ background: '#FFF0E5', padding: '10px', borderRadius: '12px' }}>
+            <Utensils color="#FC8019" size={24} strokeWidth={2.5} />
           </div>
           <span style={{ fontSize: '24px', fontWeight: 800, color: '#111827', letterSpacing: '-0.02em' }}>
             CaféSync
@@ -65,8 +65,8 @@ export default function Layout() {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => { navigate(link.path); setMobileOpen(false); }}
                 style={{
-                  background: isActive ? '#E1F5EE' : 'transparent',
-                  color: isActive ? '#1D9E75' : '#4B5563',
+                  background: isActive ? '#FFF0E5' : 'transparent',
+                  color: isActive ? '#FC8019' : '#4B5563',
                   border: 'none',
                   borderRadius: '12px',
                   padding: '12px 16px',
@@ -84,7 +84,7 @@ export default function Layout() {
                 {isActive && (
                   <motion.div 
                     layoutId="activeNavTab" 
-                    style={{ position: 'absolute', left: 0, top: '20%', bottom: '20%', width: '4px', background: '#1D9E75', borderRadius: '0 4px 4px 0' }} 
+                    style={{ position: 'absolute', left: 0, top: '20%', bottom: '20%', width: '4px', background: '#FC8019', borderRadius: '0 4px 4px 0' }} 
                   />
                 )}
                 <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
@@ -130,7 +130,7 @@ export default function Layout() {
       {/* Mobile Topbar */}
       <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '60px', background: '#FFFFFF', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', zIndex: 50 }} className="mobile-topbar">
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Utensils color="#1D9E75" size={20} strokeWidth={2.5} />
+          <Utensils color="#FC8019" size={20} strokeWidth={2.5} />
           <span style={{ fontSize: '18px', fontWeight: 700, color: '#111827', letterSpacing: '-0.02em' }}>CaféSync</span>
         </div>
         <button onClick={() => setMobileOpen(true)} style={{ background: 'none', border: 'none', padding: '8px', cursor: 'pointer' }}>

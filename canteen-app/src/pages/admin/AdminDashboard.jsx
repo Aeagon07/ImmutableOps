@@ -77,7 +77,7 @@ export default function AdminDashboard() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '24px' }}>
           {[
             { label: "Today's Orders", val: todayOrders.length, color: '#374151', icon: <ListOrdered color="#6B7280" /> },
-            { label: "Today's Revenue", val: `₹${totalRevenue}`, color: '#1D9E75', icon: <TrendingUp color="#1D9E75" /> },
+            { label: "Today's Revenue", val: `₹${totalRevenue}`, color: '#FC8019', icon: <TrendingUp color="#FC8019" /> },
             { label: "Active in Kitchen", val: activeCount, color: '#BA7517', icon: <Utensils color="#BA7517" /> },
             { label: "Completed Today", val: doneCount, color: '#7C3AED', icon: <Check color="#7C3AED" /> }
           ].map((s, i) => (
@@ -130,11 +130,11 @@ export default function AdminDashboard() {
                       <td style={{ padding: '16px 16px', fontFamily: "'Courier New', monospace", color: '#6B7280', fontWeight: 600 }}>{o.id.slice(0, 5).toUpperCase()}</td>
                       <td style={{ padding: '16px 16px', fontWeight: 600, color: '#111827' }}>{o.studentName || 'Student'}</td>
                       <td style={{ padding: '16px 16px', color: '#4B5563', fontWeight: 500 }}>{(o.items || []).map(i => `${i.qty}x ${i.name}`).join(', ')}</td>
-                      <td style={{ padding: '16px 16px', fontFamily: "'Courier New', monospace", color: '#1D9E75', fontWeight: 800 }}>₹{o.totalPrice}</td>
+                      <td style={{ padding: '16px 16px', fontFamily: "'Courier New', monospace", color: '#FC8019', fontWeight: 800 }}>₹{o.totalPrice}</td>
                       <td style={{ padding: '16px 16px' }}><StatusBadge status={o.status} /></td>
                       <td style={{ padding: '16px 16px', display: 'flex', gap: '8px' }}>
                         {o.status !== 'done' && (
-                          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleStatusUpdate(o.id, 'done')} style={{ background: '#E1F5EE', border: 'none', color: '#1D9E75', width: '32px', height: '32px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Check size={16} strokeWidth={3} /></motion.button>
+                          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleStatusUpdate(o.id, 'done')} style={{ background: '#FFF0E5', border: 'none', color: '#FC8019', width: '32px', height: '32px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Check size={16} strokeWidth={3} /></motion.button>
                         )}
                         <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleDelete(o.id)} style={{ background: '#FCEBEB', border: 'none', color: '#A32D2D', width: '32px', height: '32px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Trash2 size={16} strokeWidth={2.5} /></motion.button>
                       </td>
@@ -151,7 +151,7 @@ export default function AdminDashboard() {
                <h2 style={{ margin: '0 0 20px 0', fontSize: '15px', fontWeight: 800, color: '#111827', textTransform: 'uppercase', letterSpacing: '0.02em', display: 'flex', alignItems: 'center', gap: '8px' }}><ServerCrash size={18} /> System Config</h2>
                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid #F3F4F6' }}>
                  <span style={{ color: '#4B5563', fontWeight: 600, fontSize: '14px' }}>Canteen Portals</span>
-                 <span style={{ fontWeight: 800, fontSize: '14px', color: canteenSettings.isOpen ? '#1D9E75' : '#A32D2D', background: canteenSettings.isOpen ? '#E1F5EE' : '#FCEBEB', padding: '4px 12px', borderRadius: '20px' }}>
+                 <span style={{ fontWeight: 800, fontSize: '14px', color: canteenSettings.isOpen ? '#FC8019' : '#A32D2D', background: canteenSettings.isOpen ? '#FFF0E5' : '#FCEBEB', padding: '4px 12px', borderRadius: '20px' }}>
                    {canteenSettings.isOpen ? 'ONLINE' : 'OFFLINE'}
                  </span>
                </div>

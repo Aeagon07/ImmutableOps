@@ -22,8 +22,8 @@ function StatusStepper({ status }) {
         const isUpcoming = idx > currentIdx;
         const isLast    = idx === STATUS_STEPS.length - 1;
 
-        const circleBg = (isDone || isCurrent) ? '#1D9E75' : '#E5E7EB';
-        const lineColor = isDone ? '#1D9E75' : '#E5E7EB';
+        const circleBg = (isDone || isCurrent) ? '#FC8019' : '#E5E7EB';
+        const lineColor = isDone ? '#FC8019' : '#E5E7EB';
 
         return (
           <div key={step} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: isLast ? '0 0 auto' : 1, position: 'relative' }}>
@@ -35,7 +35,7 @@ function StatusStepper({ status }) {
             )}
             <motion.div 
               layout
-              style={{ width: '28px', height: '28px', borderRadius: '50%', background: circleBg, border: isCurrent ? '3px solid #E1F5EE' : '3px solid transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', zIndex: 1, boxShadow: isCurrent ? '0 0 0 2px #1D9E75' : 'none', flexShrink: 0 }}
+              style={{ width: '28px', height: '28px', borderRadius: '50%', background: circleBg, border: isCurrent ? '3px solid #FFF0E5' : '3px solid transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', zIndex: 1, boxShadow: isCurrent ? '0 0 0 2px #FC8019' : 'none', flexShrink: 0 }}
             >
               <AnimatePresence mode="wait">
                 {isDone ? (
@@ -45,7 +45,7 @@ function StatusStepper({ status }) {
                 ) : null}
               </AnimatePresence>
             </motion.div>
-            <span style={{ fontSize: '11px', padding: '8px 0 0 0', fontWeight: isCurrent ? 700 : 600, color: isCurrent ? '#1D9E75' : isUpcoming ? '#9CA3AF' : '#111827', textAlign: 'center', whiteSpace: 'nowrap' }}>
+            <span style={{ fontSize: '11px', padding: '8px 0 0 0', fontWeight: isCurrent ? 700 : 600, color: isCurrent ? '#FC8019' : isUpcoming ? '#9CA3AF' : '#111827', textAlign: 'center', whiteSpace: 'nowrap' }}>
               {STEP_LABELS[idx]}
             </span>
           </div>
@@ -86,7 +86,7 @@ function OrderCard({ order }) {
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
           <span style={{ fontSize: '11px', color: '#6B7280', fontWeight: 600, textTransform: 'uppercase' }}>Total</span>
-          <span style={{ fontSize: '15px', fontWeight: 800, color: '#1D9E75', fontFamily: "'Courier New', monospace" }}>₹{order.totalPrice}</span>
+          <span style={{ fontSize: '15px', fontWeight: 800, color: '#FC8019', fontFamily: "'Courier New', monospace" }}>₹{order.totalPrice}</span>
         </div>
       </div>
 
@@ -102,10 +102,10 @@ function OrderCard({ order }) {
 
       <AnimatePresence>
         {order.startDisplay && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ background: '#E1F5EE', border: '1px solid #5DCAA5', borderRadius: '12px', padding: '12px 16px', marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '8px', alignItems: 'center' }}>
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ background: '#FFF0E5', border: '1px solid #FDBA74', borderRadius: '12px', padding: '12px 16px', marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '8px', alignItems: 'center' }}>
             <div style={{ fontSize: '13px', fontWeight: 700, color: '#111827', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Coffee size={14} strokeWidth={3} /> Prep starts at: <span style={{ fontFamily: "'Courier New', monospace" }}>{order.startDisplay}</span>
-              {order.prepEstimate && <span style={{ color: '#1D9E75', fontWeight: 600, marginLeft: '4px', fontSize: '11px' }}>(~{order.prepEstimate}m)</span>}
+              {order.prepEstimate && <span style={{ color: '#FC8019', fontWeight: 600, marginLeft: '4px', fontSize: '11px' }}>(~{order.prepEstimate}m)</span>}
             </div>
             {order.aiReason && <div style={{ fontSize: '11px', color: '#111827', fontWeight: 500, width: '100%', opacity: 0.8 }}>{order.aiReason}</div>}
           </motion.div>
@@ -118,7 +118,7 @@ function OrderCard({ order }) {
         )}
 
         {order.status === 'ready' && (
-          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: [1, 1.02, 1], opacity: 1 }} transition={{ repeat: Infinity, duration: 2 }} style={{ background: '#1D9E75', borderRadius: '12px', padding: '14px', marginTop: '20px', textAlign: 'center', fontSize: '15px', fontWeight: 700, color: '#fff', boxShadow: '0 4px 12px rgba(29,158,117,0.3)' }}>
+          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: [1, 1.02, 1], opacity: 1 }} transition={{ repeat: Infinity, duration: 2 }} style={{ background: '#FC8019', borderRadius: '12px', padding: '14px', marginTop: '20px', textAlign: 'center', fontSize: '15px', fontWeight: 700, color: '#fff', boxShadow: '0 4px 12px rgba(252,128,25,0.3)' }}>
             🎉 Ready for pickup! Head to the counter.
           </motion.div>
         )}
@@ -155,7 +155,7 @@ export default function OrderTrack() {
       <div style={{ fontSize: '20px', fontWeight: 800, color: '#111827', marginBottom: '8px' }}>No active orders</div>
       <div style={{ fontSize: '15px', color: '#6B7280', marginBottom: '32px', fontWeight: 500 }}>Hungry? Place an order and track its journey here.</div>
       <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-        <Link to="/student/menu" style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', background: '#1D9E75', color: '#fff', borderRadius: '12px', padding: '16px 32px', fontWeight: 700, fontSize: '15px', textDecoration: 'none', boxShadow: '0 8px 24px rgba(29,158,117,0.3)' }}>
+        <Link to="/student/menu" style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', background: '#FC8019', color: '#fff', borderRadius: '12px', padding: '16px 32px', fontWeight: 700, fontSize: '15px', textDecoration: 'none', boxShadow: '0 8px 24px rgba(252,128,25,0.3)' }}>
           Browse Full Catalog <ArrowRight size={18} />
         </Link>
       </motion.div>
@@ -167,7 +167,7 @@ export default function OrderTrack() {
       <main style={{ maxWidth: '1000px', margin: '0 auto', padding: '32px 24px' }}>
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
           <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#111827', marginBottom: '8px', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <Activity color="#1D9E75" size={28} /> Live Order Tracking
+            <Activity color="#FC8019" size={28} /> Live Order Tracking
           </h1>
           <p style={{ fontSize: '15px', color: '#6B7280', marginBottom: '32px', fontWeight: 500 }}>Watch your food's journey from kitchen to counter 🔄</p>
         </motion.div>

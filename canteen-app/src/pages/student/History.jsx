@@ -101,7 +101,7 @@ export default function History() {
                   <motion.div key={o.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '16px', padding: '20px', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                       <span style={{ fontSize: '12px', color: '#6B7280', fontWeight: 700, textTransform: 'uppercase' }}>{date.toLocaleDateString()} at {date.toLocaleTimeString([], {timeStyle: 'short'})}</span>
-                      <span style={{ fontSize: '12px', background: '#E1F5EE', color: '#1D9E75', padding: '4px 10px', borderRadius: '20px', fontWeight: 800 }}>COMPLETED</span>
+                      <span style={{ fontSize: '12px', background: '#FFF0E5', color: '#FC8019', padding: '4px 10px', borderRadius: '20px', fontWeight: 800 }}>COMPLETED</span>
                     </div>
                     <div style={{ fontSize: '15px', color: '#111827', fontWeight: 600, marginBottom: '12px', lineHeight: 1.6 }}>
                       {(o.items || []).map(x => `${x.qty}x ${x.name}`).join(', ')}

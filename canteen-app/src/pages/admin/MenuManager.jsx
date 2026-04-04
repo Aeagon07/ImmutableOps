@@ -146,7 +146,7 @@ export default function MenuManager() {
               <div style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '16px', padding: '0 20px', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
                 {catItems.map((item, i) => {
                   const isEditing = editId === item.id;
-                  const availColor = item.available ? '#1D9E75' : '#9CA3AF';
+                  const availColor = item.available ? '#FC8019' : '#9CA3AF';
                   return (
                     <div key={item.id} style={{ borderBottom: i !== catItems.length - 1 ? '1px solid #F3F4F6' : 'none', padding: '20px 0', opacity: item.available ? 1 : 0.6, transition: 'opacity 0.2s' }}>
                       {!isEditing ? (
@@ -155,12 +155,12 @@ export default function MenuManager() {
                            <div style={{ flex: 1 }}>
                              <div style={{ fontSize: '16px', fontWeight: 800, color: '#111827', marginBottom: '4px' }}>{item.name}</div>
                              <div style={{ fontSize: '13px', color: '#6B7280', fontWeight: 600, display: 'flex', gap: '12px' }}>
-                               <span style={{ color: '#1D9E75', fontFamily: "'Courier New', monospace" }}>₹{item.price}</span>
+                               <span style={{ color: '#FC8019', fontFamily: "'Courier New', monospace" }}>₹{item.price}</span>
                                <span style={{ fontFamily: "'Courier New', monospace" }}>{item.prepTime} min</span>
                              </div>
                            </div>
                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                             <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleToggleAvailable(item.id, item.available)} style={{ border: 'none', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 700, color: availColor, cursor: 'pointer', padding: '8px 12px', borderRadius: '8px', background: item.available ? '#E1F5EE' : '#F3F4F6' }}>
+                             <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleToggleAvailable(item.id, item.available)} style={{ border: 'none', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 700, color: availColor, cursor: 'pointer', padding: '8px 12px', borderRadius: '8px', background: item.available ? '#FFF0E5' : '#F3F4F6' }}>
                                {item.available ? <CheckCircle2 size={16} /> : <Circle size={16} />} {item.available ? 'Live' : 'Hidden'}
                              </motion.button>
                              <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => startEdit(item)} style={{ ...actionBtnStyle, color: '#7C3AED', background: '#EDE9FE' }}><Edit3 size={16} /></motion.button>
@@ -177,7 +177,7 @@ export default function MenuManager() {
                             <option>Snacks</option><option>Meals</option><option>Beverages</option>
                           </select>
                           <div style={{ display: 'flex', gap: '8px' }}>
-                             <motion.button whileTap={{ scale: 0.9 }} type="submit" style={{ ...actionBtnStyle, color: '#fff', background: '#1D9E75' }}><CheckCircle2 size={18} /></motion.button>
+                             <motion.button whileTap={{ scale: 0.9 }} type="submit" style={{ ...actionBtnStyle, color: '#fff', background: '#FC8019' }}><CheckCircle2 size={18} /></motion.button>
                              <motion.button whileTap={{ scale: 0.9 }} type="button" onClick={() => setEditId(null)} style={{ ...actionBtnStyle, color: '#6B7280', background: '#F3F4F6' }}><X size={18} /></motion.button>
                           </div>
                         </form>

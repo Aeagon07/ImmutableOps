@@ -17,7 +17,7 @@ const SPINNER_STYLE = `
     width: 44px;
     height: 44px;
     border: 4px solid #e0f2ec;
-    border-top-color: #1D9E75;
+    border-top-color: #FC8019;
     border-radius: 50%;
     animation: cafesync-spin 0.75s linear infinite;
   }

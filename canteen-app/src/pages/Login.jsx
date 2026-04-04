@@ -42,7 +42,7 @@ const s = {
     padding:      '40px 36px',
     maxWidth:     '420px',
     width:        '100%',
-    boxShadow:    '0 8px 32px rgba(29,158,117,0.10), 0 2px 8px rgba(0,0,0,0.06)',
+    boxShadow:    '0 8px 32px rgba(252,128,25,0.10), 0 2px 8px rgba(0,0,0,0.06)',
   },
   logo: {
     display:        'flex',
@@ -58,7 +58,7 @@ const s = {
   logoText: {
     fontSize:   '22px',
     fontWeight: '700',
-    color:      '#1D9E75',
+    color:      '#FC8019',
     letterSpacing: '-0.3px',
   },
   title: {
@@ -95,7 +95,7 @@ const s = {
     background:   '#fafafa',
   },
   inputFocus: {
-    borderColor: '#1D9E75',
+    borderColor: '#FC8019',
     background:  '#fff',
   },
   fieldGroup: {
@@ -116,7 +116,7 @@ const s = {
     fontWeight:  '500',
   },
   radioInput: {
-    accentColor: '#1D9E75',
+    accentColor: '#FC8019',
     width:       '16px',
     height:      '16px',
     cursor:      'pointer',
@@ -130,7 +130,7 @@ const s = {
   btn: {
     width:        '100%',
     padding:      '13px',
-    background:   '#1D9E75',
+    background:   '#FC8019',
     color:        '#ffffff',
     fontSize:     '15px',
     fontWeight:   '600',
@@ -163,7 +163,7 @@ const s = {
     color:      '#6b7280',
   },
   switchLink: {
-    color:          '#1D9E75',
+    color:          '#FC8019',
     fontWeight:     '600',
     cursor:         'pointer',
     background:     'none',
@@ -360,7 +360,7 @@ function Login() {
             disabled={busy}
             style={busy ? { ...s.btn, ...s.btnDisabled } : s.btn}
             onMouseEnter={e => { if (!busy) e.currentTarget.style.background = '#178a65'; }}
-            onMouseLeave={e => { if (!busy) e.currentTarget.style.background = '#1D9E75'; }}
+            onMouseLeave={e => { if (!busy) e.currentTarget.style.background = '#FC8019'; }}
             onMouseDown={e => { if (!busy) e.currentTarget.style.transform = 'scale(0.98)'; }}
             onMouseUp={e => { e.currentTarget.style.transform = 'scale(1)'; }}
           >

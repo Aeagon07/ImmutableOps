@@ -56,7 +56,7 @@ export default function Profile() {
       
       <AnimatePresence>
         {showToast && (
-          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', background: '#1D9E75', color: '#fff', padding: '12px 24px', borderRadius: '30px', fontWeight: 700, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px', zIndex: 100, boxShadow: '0 8px 24px rgba(29,158,117,0.3)' }}>
+          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', background: '#FC8019', color: '#fff', padding: '12px 24px', borderRadius: '30px', fontWeight: 700, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px', zIndex: 100, boxShadow: '0 8px 24px rgba(252,128,25,0.3)' }}>
             <CheckCircle2 size={18} /> Profile updated successfully!
           </motion.div>
         )}
@@ -65,7 +65,7 @@ export default function Profile() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ background: '#FFFFFF', borderRadius: '24px', border: '1px solid #E5E7EB', overflow: 'hidden', boxShadow: '0 10px 25px rgba(0,0,0,0.02)' }}>
         
         {/* Cover Video/Gradient */}
-        <div style={{ height: '160px', background: 'linear-gradient(135deg, #1D9E75 0%, #111827 100%)', position: 'relative' }}>
+        <div style={{ height: '160px', background: 'linear-gradient(135deg, #FC8019 0%, #111827 100%)', position: 'relative' }}>
           <div style={{ position: 'absolute', bottom: '-40px', left: '32px', width: '96px', height: '96px', borderRadius: '50%', background: '#F5F7F6', border: '4px solid #FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px', color: '#111827', fontWeight: 800 }}>
             {user.name ? user.name.charAt(0).toUpperCase() : <User size={40} />}
           </div>
@@ -84,9 +84,9 @@ export default function Profile() {
                       value={editName} 
                       onChange={e => setEditName(e.target.value)} 
                       disabled={isSaving}
-                      style={{ fontSize: '24px', fontWeight: 800, color: '#111827', padding: '8px 16px', borderRadius: '12px', border: '2px solid #1D9E75', outline: 'none', background: '#F9FAFB', width: '100%', maxWidth: '300px' }} 
+                      style={{ fontSize: '24px', fontWeight: 800, color: '#111827', padding: '8px 16px', borderRadius: '12px', border: '2px solid #FC8019', outline: 'none', background: '#F9FAFB', width: '100%', maxWidth: '300px' }} 
                     />
-                    <button onClick={handleSave} disabled={isSaving} style={{ background: '#1D9E75', border: 'none', color: '#fff', borderRadius: '12px', padding: '12px', cursor: isSaving ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <button onClick={handleSave} disabled={isSaving} style={{ background: '#FC8019', border: 'none', color: '#fff', borderRadius: '12px', padding: '12px', cursor: isSaving ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <Save size={20} strokeWidth={2.5} />
                     </button>
                     <button onClick={() => setIsEditing(false)} disabled={isSaving} style={{ background: '#FCEBEB', border: 'none', color: '#A32D2D', borderRadius: '12px', padding: '12px', cursor: isSaving ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -112,7 +112,7 @@ export default function Profile() {
               </div>
             </div>
             
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#E1F5EE', color: '#111827', padding: '8px 16px', borderRadius: '20px', fontSize: '13px', fontWeight: 700, textTransform: 'uppercase' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#FFF0E5', color: '#111827', padding: '8px 16px', borderRadius: '20px', fontSize: '13px', fontWeight: 700, textTransform: 'uppercase' }}>
               <Shield size={16} /> Role: {user.role}
             </div>
           </div>
@@ -138,9 +138,9 @@ export default function Profile() {
                    <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827', marginTop: '4px' }}>{stats.totalOrders}</div>
                  </div>
                  <div style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '16px', padding: '20px' }}>
-                   <Award color="#1D9E75" size={20} style={{ marginBottom: '12px' }} />
+                   <Award color="#FC8019" size={20} style={{ marginBottom: '12px' }} />
                    <div style={{ fontSize: '12px', color: '#6B7280', fontWeight: 700, textTransform: 'uppercase' }}>Total Spent</div>
-                   <div style={{ fontSize: '24px', fontWeight: 800, color: '#1D9E75', marginTop: '4px', fontFamily: "'Courier New', monospace" }}>₹{stats.totalSpent}</div>
+                   <div style={{ fontSize: '24px', fontWeight: 800, color: '#FC8019', marginTop: '4px', fontFamily: "'Courier New', monospace" }}>₹{stats.totalSpent}</div>
                  </div>
                </>
              )}

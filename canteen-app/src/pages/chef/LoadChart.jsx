@@ -52,7 +52,7 @@ export default function LoadChart() {
     datasets: [{
       label: 'Active Orders per 30m Slot',
       data: slotCounts,
-      backgroundColor: slotCounts.map(c => c > 5 ? '#A32D2D' : '#1D9E75'),
+      backgroundColor: slotCounts.map(c => c > 5 ? '#A32D2D' : '#FC8019'),
       borderRadius: 4,
     }]
   };
@@ -84,7 +84,7 @@ export default function LoadChart() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px', marginBottom: '24px' }}>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '16px', padding: '20px', display: 'flex', alignItems: 'center', gap: '16px', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
-            <div style={{ background: '#E1F5EE', padding: '12px', borderRadius: '12px' }}><TrendingUp size={24} color="#1D9E75" /></div>
+            <div style={{ background: '#FFF0E5', padding: '12px', borderRadius: '12px' }}><TrendingUp size={24} color="#FC8019" /></div>
             <div>
               <div style={{ fontSize: '12px', color: '#6B7280', textTransform: 'uppercase', fontWeight: 700, marginBottom: '4px' }}>Total Active Today</div>
               <div style={{ fontSize: '28px', fontWeight: 800, color: '#111827', lineHeight: 1 }}>{totalToday}</div>
@@ -92,10 +92,10 @@ export default function LoadChart() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '16px', padding: '20px', display: 'flex', alignItems: 'center', gap: '16px', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
-            <div style={{ background: isOverload ? '#FCEBEB' : '#E1F5EE', padding: '12px', borderRadius: '12px' }}><BarChart3 size={24} color={isOverload ? '#A32D2D' : '#1D9E75'} /></div>
+            <div style={{ background: isOverload ? '#FCEBEB' : '#FFF0E5', padding: '12px', borderRadius: '12px' }}><BarChart3 size={24} color={isOverload ? '#A32D2D' : '#FC8019'} /></div>
             <div>
               <div style={{ fontSize: '12px', color: '#6B7280', textTransform: 'uppercase', fontWeight: 700, marginBottom: '4px' }}>Load This Slot</div>
-              <div style={{ fontSize: '28px', fontWeight: 800, color: isOverload ? '#A32D2D' : '#1D9E75', lineHeight: 1 }}>{currentLoad} <span style={{ fontSize: '14px', color: '#6B7280' }}>/ 5</span></div>
+              <div style={{ fontSize: '28px', fontWeight: 800, color: isOverload ? '#A32D2D' : '#FC8019', lineHeight: 1 }}>{currentLoad} <span style={{ fontSize: '14px', color: '#6B7280' }}>/ 5</span></div>
             </div>
           </motion.div>
         </div>
