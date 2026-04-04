@@ -36,13 +36,16 @@ export default function Login() {
   }
 
   const containerStyle = {
-    minHeight: '100vh',
+    minHeight: '100dvh',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#F5F7F6',
     position: 'relative',
-    overflow: 'hidden'
+    overflowX: 'hidden',
+    overflowY: 'auto',
+    padding: '24px 16px',
+    boxSizing: 'border-box'
   };
 
   const cardStyle = {

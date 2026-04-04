@@ -95,6 +95,14 @@ export default function MenuManager() {
   return (
     <div style={{ paddingBottom: '80px' }}>
       <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '32px 24px' }}>
+        <style>{`
+          .add-grid { grid-template-columns: 80px 2fr 1fr 1fr 1.5fr; }
+          .edit-grid { grid-template-columns: 60px 2fr 1fr 1fr 1.5fr min-content; }
+          @media (max-width: 800px) {
+            .add-grid, .edit-grid { grid-template-columns: 1fr; }
+          }
+        `}</style>
+        
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
           <div>
             <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#111827', margin: 0 }}>Inventory Catalog</h1>
@@ -114,7 +122,7 @@ export default function MenuManager() {
           {isAdding && (
             <motion.div initial={{ opacity: 0, height: 0, y: -20 }} animate={{ opacity: 1, height: 'auto', y: 0 }} exit={{ opacity: 0, height: 0, y: -20 }} style={{ background: '#FFFFFF', border: '2px solid #7C3AED', borderRadius: '16px', padding: '24px', marginBottom: '32px', boxShadow: '0 10px 25px rgba(124,58,237,0.1)', overflow: 'hidden' }}>
               <h2 style={{ fontSize: '16px', fontWeight: 800, color: '#111827', margin: '0 0 20px 0', display: 'flex', alignItems: 'center', gap: '8px' }}><Plus size={20} color="#7C3AED" /> Create New Listing</h2>
-              <form onSubmit={handleAdd} style={{ display: 'grid', gridTemplateColumns: '80px 2fr 1fr 1fr 1.5fr', gap: '12px', alignItems: 'end' }}>
+              <form onSubmit={handleAdd} className="add-grid" style={{ display: 'grid', gap: '12px', alignItems: 'end' }}>
                 <div><label style={labelStyle}>Emoji</label><input required maxLength="2" value={newEmoji} onChange={e=>setNewEmoji(e.target.value)} style={{ ...inputStyle, textAlign: 'center', fontSize: '20px' }} /></div>
                 <div><label style={labelStyle}>Name</label><input required value={newName} onChange={e=>setNewName(e.target.value)} style={inputStyle} /></div>
                 <div><label style={labelStyle}>Price (₹)</label><input required type="number" min="0" value={newPrice} onChange={e=>setNewPrice(e.target.value)} style={{...inputStyle, fontFamily: "'Courier New', monospace", fontWeight: 700}} /></div>
@@ -168,7 +176,7 @@ export default function MenuManager() {
                            </div>
                         </div>
                       ) : (
-                        <form onSubmit={saveEdit} style={{ display: 'grid', gridTemplateColumns: '60px 2fr 1fr 1fr 1.5fr min-content', gap: '12px', alignItems: 'end' }}>
+                        <form onSubmit={saveEdit} className="edit-grid" style={{ display: 'grid', gap: '12px', alignItems: 'end' }}>
                           <input required maxLength="2" value={editForm.emoji} onChange={e=>setEditForm({...editForm, emoji: e.target.value})} style={{ ...inputStyle, textAlign: 'center', fontSize: '18px' }} />
                           <input required value={editForm.name} onChange={e=>setEditForm({...editForm, name: e.target.value})} style={inputStyle} />
                           <input required type="number" value={editForm.price} onChange={e=>setEditForm({...editForm, price: e.target.value})} style={{...inputStyle, fontFamily: "'Courier New', monospace", fontWeight: 700}} />

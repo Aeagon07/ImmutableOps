@@ -173,7 +173,7 @@ export default function Queue() {
           </div>
         </div>
 
-        <motion.div layout style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '24px' }}>
+        <motion.div layout style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
           <AnimatePresence mode="popLayout">
             {orders.length === 0 ? (
               <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#6B7280', padding: '64px', background: '#FFFFFF', borderRadius: '16px', border: '2px dashed #E5E7EB', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}>

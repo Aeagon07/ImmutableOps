@@ -91,7 +91,12 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)', gap: '24px', alignItems: 'start' }}>
+        <style>{`
+          .responsive-grid { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+          @media (max-width: 1000px) { .responsive-grid { grid-template-columns: minmax(0, 1fr); } }
+        `}</style>
+        
+        <div className="responsive-grid" style={{ display: 'grid', gap: '24px', alignItems: 'start' }}>
           
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '16px', padding: '24px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', overflowX: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
