@@ -4,7 +4,6 @@ import {
   collection,
   query,
   where,
-  orderBy,
   onSnapshot,
 } from 'firebase/firestore';
 import { db } from '../../firebase';
@@ -434,14 +433,22 @@ export default function OrderTrack() {
     const q = query(
       collection(db, 'orders'),
       where('studentId', '==', user.uid),
-      where('status', 'in', ['queued', 'preparing', 'ready']),
-      orderBy('createdAt', 'desc')
+      where('status', 'in', ['queued', 'preparing', 'ready'])
+      // NOTE: orderBy removed — Firestore 'in' queries with orderBy need
+      // a composite index. We sort client-side instead to avoid index setup.
     );
 
     const unsubscribe = onSnapshot(
       q,
       snap => {
-        const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const docs = snap.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .sort((a, b) => {
+            // Sort by createdAt descending (newest first)
+            const at = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt ?? 0);
+            const bt = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt ?? 0);
+            return bt - at;
+          });
         setOrders(docs);
         setLoading(false);
       },

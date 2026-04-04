@@ -21,7 +21,7 @@ export default function Cart() {
   }, [cartItems, navigate]);
 
   const [pickupOption, setPickupOption] = useState('A'); // 'A' or 'B'
-  const [minutes, setMinutes] = useState(30);
+  const [minutes, setMinutes] = useState(30); // always kept as Number
   
   // default 1 hour from now for timeValue
   const initialDate = new Date(Date.now() + 60 * 60000);
@@ -41,7 +41,7 @@ export default function Cart() {
       
       let pickupTimeISO;
       if (pickupOption === 'A') {
-        pickupTimeISO = new Date(Date.now() + minutes * 60000).toISOString();
+        pickupTimeISO = new Date(Date.now() + Number(minutes) * 60000).toISOString();
       } else {
         pickupTimeISO = timeInputToISO(timeValue);
       }
@@ -137,7 +137,7 @@ export default function Cart() {
               min="1" 
               max="120" 
               value={minutes} 
-              onChange={e => setMinutes(e.target.value)} 
+              onChange={e => setMinutes(Number(e.target.value) || 1)} 
               disabled={pickupOption !== 'A'}
               style={{ width: '60px', margin: '0 8px', padding: '4px', borderRadius: '4px', border: '1px solid #ccc' }}
             />
