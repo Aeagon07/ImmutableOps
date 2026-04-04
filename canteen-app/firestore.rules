@@ -1,0 +1,52 @@
+// ============================================================
+//  PRODUCTION RULES — deploy before going live
+//  Command: firebase deploy --only firestore:rules
+// ============================================================
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── /users/{uid} ──────────────────────────────────────────
+    // Schema: { name, email, role: "student"|"chef"|"admin",
+    //           createdAt: Timestamp, lastLogin: Timestamp }
+    match /users/{uid} {
+      allow read: if request.auth.uid == uid
+                  || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow write: if request.auth.uid == uid;
+    }
+
+    // ── /orders/{orderId} ─────────────────────────────────────
+    // Schema: { studentId, studentName, items:[{id,name,qty,prepTime,price}],
+    //   totalPrice, pickupTime: ISO string, pickupTimeDisplay,
+    //   status: "queued"|"preparing"|"ready"|"done",
+    //   scheduledStart: ISO string, startDisplay, prepEstimate: number,
+    //   aiReason, priority: "normal"|"high"|"urgent",
+    //   delayFlag: bool, manualPriorityOverride: bool,
+    //   overrideNote: string, createdAt: serverTimestamp() }
+    match /orders/{orderId} {
+      allow read: if request.auth.uid == resource.data.studentId
+                  || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['chef', 'admin'];
+      allow create: if request.auth != null
+                    && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'student';
+      allow update: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['chef', 'admin'];
+    }
+
+    // ── /menu/{itemId} ────────────────────────────────────────
+    // Schema: { name, price, prepTime,
+    //   category: "Snacks"|"Meals"|"Beverages",
+    //   emoji, available: bool, displayOrder: number, addedBy: uid }
+    match /menu/{itemId} {
+      allow read: if request.auth != null;
+      allow write: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['chef', 'admin'];
+    }
+
+    // ── /settings/{doc} ───────────────────────────────────────
+    // Schema (/settings/canteen): { maxConcurrentOrders: 6,
+    //   avgLoadFactor: 1.5, isOpen: bool,
+    //   openTime: "08:00", closeTime: "17:00", updatedBy: uid }
+    match /settings/{doc} {
+      allow read: if request.auth != null;
+      allow write: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+  }
+}
