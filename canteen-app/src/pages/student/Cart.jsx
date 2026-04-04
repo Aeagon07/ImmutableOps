@@ -20,10 +20,9 @@ export default function Cart() {
     }
   }, [cartItems, navigate]);
 
-  const [pickupOption, setPickupOption] = useState('A'); // 'A' or 'B'
-  const [minutes, setMinutes] = useState(30); // always kept as Number
+  const [pickupOption, setPickupOption] = useState('A'); 
+  const [minutes, setMinutes] = useState(30);
   
-  // default 1 hour from now for timeValue
   const initialDate = new Date(Date.now() + 60 * 60000);
   const initialTime = `${initialDate.getHours().toString().padStart(2, '0')}:${initialDate.getMinutes().toString().padStart(2, '0')}`;
   const [timeValue, setTimeValue] = useState(initialTime);
@@ -76,14 +75,11 @@ export default function Cart() {
       
       setSuccessMsg(`✓ Order placed! Chef will start at ${schedule.startDisplay}`);
       
-      // Fire and forget
       getAIInsights({ ...orderData, startDisplay: schedule.startDisplay }, { activeOrders: activeCount })
         .then(ai => updateDoc(ref, { aiReason: ai.tip, priority: ai.priority }))
         .catch(() => {});
 
-      setTimeout(() => {
-        navigate('/student/track');
-      }, 1500);
+      setTimeout(() => navigate('/student/track'), 1500);
 
     } catch (error) {
       console.error('Error placing order:', error);
@@ -93,66 +89,90 @@ export default function Cart() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F9FAFB', fontFamily: 'sans-serif' }}>
-      <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: '#fff', borderBottom: '1px solid #eee' }}>
+    <div style={{ minHeight: '100vh', background: '#F5F7F6', paddingBottom: '80px' }}>
+      <header
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 100,
+          height: '52px',
+          background: '#FFFFFF',
+          borderBottom: '1px solid #E5E7EB',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 16px',
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', fontSize: '18px', cursor: 'pointer' }}>←</button>
-          <h1 style={{ margin: 0, fontSize: '18px', color: '#1D9E75' }}>Your Cart</h1>
+          <button 
+            onClick={() => navigate(-1)} 
+            style={{ background: 'none', border: 'none', fontSize: '18px', cursor: 'pointer', padding: 0 }}
+          >
+            ←
+          </button>
+          <span style={{ fontSize: '16px', fontWeight: 700, color: '#1D9E75' }}>
+            🍽 CaféSync
+          </span>
         </div>
-        <span style={{ fontSize: '14px', color: '#666' }}>{user?.name || 'Student'}</span>
+        <span style={{ fontSize: '13px', color: '#111827', fontWeight: 500 }}>{user?.name || 'Student'}</span>
       </header>
 
-      <main style={{ padding: '16px', maxWidth: '600px', margin: '0 auto' }}>
+      <main style={{ padding: '20px 16px', maxWidth: '600px', margin: '0 auto' }}>
+        
+        <h1 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', marginBottom: '20px' }}>Review Cart</h1>
+
         {successMsg && (
-          <div style={{ padding: '16px', background: '#e6f4ea', color: '#1D9E75', borderRadius: '12px', marginBottom: '16px', fontWeight: 'bold' }}>
+          <div style={{ padding: '14px 16px', background: '#E1F5EE', border: '1px solid #5DCAA5', color: '#085041', borderRadius: '12px', marginBottom: '20px', fontWeight: 600, fontSize: '13px' }}>
             {successMsg}
           </div>
         )}
 
-        <div style={{ background: '#fff', borderRadius: '12px', padding: '16px', marginBottom: '16px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-          <h2 style={{ margin: '0 0 16px 0', fontSize: '16px' }}>Order Summary</h2>
+        <div style={{ background: '#FFFFFF', borderRadius: '12px', padding: '14px 16px', marginBottom: '20px', border: '1px solid #E5E7EB', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+          <h2 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: 600, color: '#111827' }}>Order Summary</h2>
           {cartItems.map((item, idx) => (
-            <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', borderBottom: '1px solid #f0f0f0', paddingBottom: '8px' }}>
+            <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', borderBottom: '1px solid #E5E7EB', paddingBottom: '8px' }}>
               <div>
-                <div style={{ fontWeight: 'bold' }}>{item.name}</div>
-                <div style={{ fontSize: '14px', color: '#666' }}>Qty: {item.qty} × ₹{item.price}</div>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: '#111827', lineHeight: 1.6 }}>{item.name}</div>
+                <div style={{ fontSize: '11px', color: '#6B7280', letterSpacing: '0.02em' }}>Qty: {item.qty} × ₹{item.price}</div>
               </div>
-              <div style={{ fontWeight: 'bold' }}>₹{item.qty * item.price}</div>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#111827', fontFamily: "'Courier New', monospace" }}>
+                ₹{item.qty * item.price}
+              </div>
             </div>
           ))}
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '16px', fontWeight: 'bold', fontSize: '18px' }}>
-            <span>Total</span>
-            <span style={{ color: '#1D9E75' }}>₹{totalPrice}</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '16px' }}>
+            <span style={{ fontSize: '14px', fontWeight: 600, color: '#111827' }}>Total</span>
+            <span style={{ fontSize: '14px', fontWeight: 600, color: '#1D9E75', fontFamily: "'Courier New', monospace" }}>₹{totalPrice}</span>
           </div>
         </div>
 
-        <div style={{ background: '#fff', borderRadius: '12px', padding: '16px', marginBottom: '24px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-          <h2 style={{ margin: '0 0 16px 0', fontSize: '16px' }}>Pickup Time</h2>
+        <div style={{ background: '#FFFFFF', borderRadius: '12px', padding: '14px 16px', marginBottom: '20px', border: '1px solid #E5E7EB', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+          <h2 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: 600, color: '#111827' }}>Pickup Time</h2>
           
-          <label style={{ display: 'flex', alignItems: 'center', marginBottom: '12px', cursor: 'pointer' }}>
+          <label style={{ display: 'flex', alignItems: 'center', marginBottom: '12px', cursor: 'pointer', fontSize: '13px', color: '#374151' }}>
             <input type="radio" value="A" checked={pickupOption === 'A'} onChange={() => setPickupOption('A')} style={{ marginRight: '8px' }} />
             I'll arrive in
             <input 
               type="number" 
-              min="1" 
-              max="120" 
+              min="1" max="120" 
               value={minutes} 
               onChange={e => setMinutes(Number(e.target.value) || 1)} 
               disabled={pickupOption !== 'A'}
-              style={{ width: '60px', margin: '0 8px', padding: '4px', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ width: '60px', margin: '0 8px', padding: '6px', borderRadius: '8px', border: '1px solid #E5E7EB', fontSize: '13px', fontFamily: "'Courier New', monospace" }}
             />
-            minutes
+            min
           </label>
 
-          <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+          <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '13px', color: '#374151' }}>
             <input type="radio" value="B" checked={pickupOption === 'B'} onChange={() => setPickupOption('B')} style={{ marginRight: '8px' }} />
-            Pick a specific time
+            Pick specific time
             <input 
               type="time" 
               value={timeValue} 
               onChange={e => setTimeValue(e.target.value)} 
               disabled={pickupOption !== 'B'}
-              style={{ marginLeft: '8px', padding: '4px', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ marginLeft: '8px', padding: '6px', borderRadius: '8px', border: '1px solid #E5E7EB', fontSize: '13px', fontFamily: "'Courier New', monospace" }}
             />
           </label>
         </div>
@@ -162,15 +182,19 @@ export default function Cart() {
           disabled={loading || !!successMsg}
           style={{
             width: '100%',
-            padding: '16px',
-            background: loading || successMsg ? '#a0d4c2' : '#1D9E75',
+            padding: '10px 20px',
+            background: '#1D9E75',
             color: '#fff',
             border: 'none',
-            borderRadius: '12px',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            cursor: loading || successMsg ? 'not-allowed' : 'pointer'
+            borderRadius: '8px',
+            fontSize: '13px',
+            fontWeight: 500,
+            cursor: loading || successMsg ? 'not-allowed' : 'pointer',
+            opacity: (loading || successMsg) ? 0.5 : 1,
+            transition: 'opacity 0.15s, transform 0.1s'
           }}
+          onMouseEnter={e => { if(!loading && !successMsg) e.currentTarget.style.opacity = '0.88' }}
+          onMouseLeave={e => { if(!loading && !successMsg) e.currentTarget.style.opacity = '1' }}
         >
           {loading ? 'Placing order...' : 'Place Order'}
         </button>

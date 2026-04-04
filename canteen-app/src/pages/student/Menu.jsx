@@ -28,12 +28,6 @@ function getTimeSlot() {
   }
 }
 
-// ─── Style tokens ─────────────────────────────────────────────────────────────
-const GREEN    = '#1D9E75';
-const DARK_RED = '#A32D2D';
-const BORDER   = '#E5E7EB';
-const GRAY     = '#6B7280';
-
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function NavBar({ user, onLogout }) {
@@ -43,42 +37,37 @@ function NavBar({ user, onLogout }) {
         position: 'sticky',
         top: 0,
         zIndex: 100,
-        height: 52,
-        background: '#fff',
-        borderBottom: `1px solid ${BORDER}`,
+        height: '52px',
+        background: '#FFFFFF',
+        borderBottom: '1px solid #E5E7EB',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: '0 16px',
-        boxShadow: '0 1px 6px rgba(0,0,0,0.04)',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.06)' // subtle sticky distinction
       }}
     >
-      {/* Logo */}
-      <span style={{ fontSize: 18, fontWeight: 700, color: GREEN, letterSpacing: '-0.3px' }}>
+      <span style={{ fontSize: '16px', fontWeight: 700, color: '#1D9E75' }}>
         🍽 CaféSync
       </span>
-
-      {/* Right side */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <span style={{ fontSize: 13, color: '#374151', fontWeight: 500 }}>
-          Hello, {user?.name || 'Student'} 👋
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <span style={{ fontSize: '13px', color: '#111827', fontWeight: 500 }}>
+          {user?.name || 'Student'}
         </span>
         <button
-          id="btn-logout"
           onClick={onLogout}
           style={{
-            background: 'none',
+            background: 'transparent',
             border: 'none',
+            color: '#A32D2D',
+            fontSize: '13px',
+            fontWeight: 500,
             cursor: 'pointer',
-            color: DARK_RED,
-            fontSize: 13,
-            fontWeight: 600,
             padding: '4px 8px',
-            borderRadius: 6,
-            transition: 'background 0.2s',
+            transition: 'opacity 0.15s'
           }}
-          onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
-          onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+          onMouseEnter={e => e.currentTarget.style.opacity = '0.88'}
+          onMouseLeave={e => e.currentTarget.style.opacity = '1'}
         >
           Logout
         </button>
@@ -88,11 +77,8 @@ function NavBar({ user, onLogout }) {
 }
 
 function RecommendationBanner({ slot, menuItems }) {
-  // Find emojis of recommended items that exist in the menu
   const recPills = slot.items.map(name => {
-    const found = menuItems.find(
-      m => m.name.toLowerCase() === name.toLowerCase()
-    );
+    const found = menuItems.find(m => m.name.toLowerCase() === name.toLowerCase());
     return { name, emoji: found ? found.emoji : null };
   });
 
@@ -101,17 +87,16 @@ function RecommendationBanner({ slot, menuItems }) {
       style={{
         background: '#E1F5EE',
         border: '1px solid #5DCAA5',
-        borderRadius: 12,
-        padding: '12px 14px',
-        marginBottom: 14,
+        borderRadius: '12px',
+        padding: '14px 16px',
+        marginBottom: '20px',
         display: 'flex',
         alignItems: 'center',
         flexWrap: 'wrap',
-        gap: 8,
-        animation: 'fadeSlideIn 0.4s ease',
+        gap: '8px'
       }}
     >
-      <span style={{ fontSize: 13, fontWeight: 600, color: '#155e45', marginRight: 4, flexShrink: 0 }}>
+      <span style={{ fontSize: '14px', fontWeight: 600, color: '#085041', marginRight: '4px' }}>
         {slot.label}
       </span>
       {recPills.map(pill => (
@@ -120,14 +105,14 @@ function RecommendationBanner({ slot, menuItems }) {
           style={{
             display: 'inline-flex',
             alignItems: 'center',
-            gap: 4,
-            background: '#fff',
+            gap: '4px',
+            background: '#FFFFFF',
             border: '1px solid #5DCAA5',
-            borderRadius: 20,
+            borderRadius: '20px',
             padding: '3px 10px',
-            fontSize: 12,
+            fontSize: '11px',
             fontWeight: 600,
-            color: '#155e45',
+            color: '#085041',
             whiteSpace: 'nowrap',
           }}
         >
@@ -141,26 +126,26 @@ function RecommendationBanner({ slot, menuItems }) {
 
 function CategoryFilters({ categories, active, onChange }) {
   return (
-    <div style={{ display: 'flex', gap: 8, marginBottom: 14, flexWrap: 'wrap' }}>
+    <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
       {categories.map(cat => {
         const isActive = cat === active;
         return (
           <button
             key={cat}
-            id={`filter-${cat.toLowerCase()}`}
             onClick={() => onChange(cat)}
             style={{
-              padding: '7px 16px',
-              borderRadius: 20,
-              border: isActive ? 'none' : `1px solid ${BORDER}`,
-              background: isActive ? GREEN : '#fff',
-              color: isActive ? '#fff' : '#374151',
-              fontWeight: 600,
-              fontSize: 13,
+              padding: '6px 14px',
+              borderRadius: '20px',
+              border: isActive ? 'none' : '1px solid #E5E7EB',
+              background: isActive ? '#1D9E75' : '#FFFFFF',
+              color: isActive ? '#fff' : '#6B7280',
+              fontWeight: 500,
+              fontSize: '13px',
               cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              boxShadow: isActive ? '0 2px 8px rgba(29,158,117,0.3)' : 'none',
+              transition: 'opacity 0.15s, transform 0.1s',
             }}
+            onMouseEnter={e => e.currentTarget.style.opacity = '0.88'}
+            onMouseLeave={e => e.currentTarget.style.opacity = '1'}
           >
             {cat}
           </button>
@@ -170,138 +155,91 @@ function CategoryFilters({ categories, active, onChange }) {
   );
 }
 
-function MenuItemCard({ item, cartEntry, onAdd, onInc, onDec, isRecommended }) {
-  const [pressed, setPressed] = useState(false);
-
-  const cardStyle = {
-    background: '#fff',
-    borderRadius: 12,
-    padding: 14,
-    border: isRecommended
-      ? `1.5px solid ${GREEN}`
-      : `1px solid ${BORDER}`,
-    boxShadow: isRecommended
-      ? `0 0 0 3px rgba(29,158,117,0.12), 0 1px 3px rgba(0,0,0,0.06)`
-      : '0 1px 3px rgba(0,0,0,0.06)',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    transition: 'transform 0.15s ease, box-shadow 0.15s ease',
-    transform: pressed ? 'scale(0.97)' : 'scale(1)',
-    cursor: 'default',
-  };
-
+function MenuItemCard({ item, cartEntry, onAdd, onInc, onDec }) {
   return (
     <div
-      style={cardStyle}
-      onMouseEnter={e => {
-        e.currentTarget.style.transform = 'translateY(-2px)';
-        e.currentTarget.style.boxShadow = isRecommended
-          ? `0 0 0 3px rgba(29,158,117,0.18), 0 4px 12px rgba(0,0,0,0.1)`
-          : '0 4px 12px rgba(0,0,0,0.1)';
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.boxShadow = isRecommended
-          ? `0 0 0 3px rgba(29,158,117,0.12), 0 1px 3px rgba(0,0,0,0.06)`
-          : '0 1px 3px rgba(0,0,0,0.06)';
+      style={{
+        background: '#FFFFFF',
+        borderRadius: '12px',
+        padding: '14px 16px',
+        marginBottom: '10px',
+        border: '1px solid #E5E7EB',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+        display: 'flex',
+        flexDirection: 'column'
       }}
     >
-      {/* Emoji */}
-      <div style={{ fontSize: 36, textAlign: 'center', marginBottom: 8, lineHeight: 1 }}>
+      <div style={{ fontSize: '32px', textAlign: 'center', marginBottom: '8px' }}>
         {item.emoji}
       </div>
-
-      {/* Name */}
-      <div style={{ fontSize: 14, fontWeight: 600, color: '#111', marginBottom: 4, textAlign: 'center' }}>
+      <div style={{ fontSize: '14px', fontWeight: 600, color: '#111827', marginBottom: '4px', textAlign: 'center' }}>
         {item.name}
       </div>
-
-      {/* Price + Prep row */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-        <span style={{ color: GREEN, fontWeight: 700, fontFamily: 'monospace', fontSize: 14 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+        <span style={{ color: '#1D9E75', fontWeight: 600, fontFamily: "'Courier New', monospace", fontSize: '14px' }}>
           ₹{item.price}
         </span>
-        <span style={{ color: GRAY, fontSize: 11 }}>
+        <span style={{ color: '#6B7280', fontSize: '11px' }}>
           {item.prepTime} min
         </span>
       </div>
 
-      {/* Cart controls */}
       {!cartEntry ? (
         <button
-          id={`add-${item.id}`}
           onClick={() => onAdd(item)}
-          onMouseDown={() => setPressed(true)}
-          onMouseUp={() => setPressed(false)}
           style={{
+            background: 'transparent',
+            color: '#1D9E75',
+            border: '1.5px solid #1D9E75',
+            borderRadius: '8px',
+            padding: '10px 20px',
+            fontSize: '13px',
+            fontWeight: 500,
             width: '100%',
-            padding: '8px 0',
-            background: GREEN,
-            color: '#fff',
-            border: 'none',
-            borderRadius: 8,
-            fontWeight: 700,
-            fontSize: 13,
             cursor: 'pointer',
-            transition: 'background 0.2s',
-            letterSpacing: '0.2px',
+            transition: 'opacity 0.15s, transform 0.1s'
           }}
-          onMouseEnter={e => (e.currentTarget.style.background = '#17896a')}
-          onMouseLeave={e => (e.currentTarget.style.background = GREEN)}
+          onMouseEnter={e => e.currentTarget.style.opacity = '0.88'}
+          onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+          onMouseDown={e => e.currentTarget.style.transform = 'scale(0.98)'}
+          onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
         >
-          + Add
+          Add 
         </button>
       ) : (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
           <button
-            id={`dec-${item.id}`}
             onClick={() => onDec(item.id)}
             style={{
               flex: 1,
-              padding: '7px 0',
-              background: '#F3F4F6',
-              border: `1px solid ${BORDER}`,
-              borderRadius: 8,
-              fontWeight: 700,
-              fontSize: 16,
+              padding: '10px 0',
+              background: '#F5F7F6',
+              border: '1px solid #E5E7EB',
+              borderRadius: '8px',
+              fontWeight: 600,
+              fontSize: '14px',
               cursor: 'pointer',
               color: '#374151',
-              transition: 'background 0.2s',
             }}
-            onMouseEnter={e => (e.currentTarget.style.background = '#E5E7EB')}
-            onMouseLeave={e => (e.currentTarget.style.background = '#F3F4F6')}
           >
             −
           </button>
-          <span
-            style={{
-              minWidth: 28,
-              textAlign: 'center',
-              fontWeight: 700,
-              fontSize: 15,
-              color: GREEN,
-            }}
-          >
+          <span style={{ minWidth: '28px', textAlign: 'center', fontWeight: 600, fontSize: '14px', color: '#1D9E75' }}>
             {cartEntry.qty}
           </span>
           <button
-            id={`inc-${item.id}`}
             onClick={() => onInc(item.id)}
             style={{
               flex: 1,
-              padding: '7px 0',
-              background: GREEN,
+              padding: '10px 0',
+              background: '#1D9E75',
               border: 'none',
-              borderRadius: 8,
-              fontWeight: 700,
-              fontSize: 16,
+              borderRadius: '8px',
+              fontWeight: 600,
+              fontSize: '14px',
               cursor: 'pointer',
               color: '#fff',
-              transition: 'background 0.2s',
             }}
-            onMouseEnter={e => (e.currentTarget.style.background = '#17896a')}
-            onMouseLeave={e => (e.currentTarget.style.background = GREEN)}
           >
             +
           </button>
@@ -322,49 +260,41 @@ function CartBottomBar({ cartItems, onCheckout }) {
         bottom: 0,
         left: 0,
         right: 0,
-        height: 60,
-        background: '#fff',
-        borderTop: `1px solid ${BORDER}`,
+        height: '60px',
+        background: '#FFFFFF',
+        borderTop: '1px solid #E5E7EB',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: '0 16px',
         zIndex: 200,
-        boxShadow: '0 -2px 12px rgba(0,0,0,0.07)',
-        animation: 'slideUp 0.25s ease',
+        boxShadow: '0 -1px 3px rgba(0,0,0,0.06)'
       }}
     >
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: '#111' }}>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <span style={{ fontSize: '14px', fontWeight: 600, color: '#111827' }}>
           🛒 {totalQty} item{totalQty !== 1 ? 's' : ''}
         </span>
-        <span style={{ fontSize: 12, color: GRAY, fontFamily: 'monospace' }}>
+        <span style={{ fontSize: '13px', color: '#1D9E75', fontFamily: "'Courier New', monospace", fontWeight: 600 }}>
           ₹{totalPrice}
         </span>
       </div>
 
       <button
-        id="btn-checkout"
         onClick={onCheckout}
         style={{
-          background: GREEN,
+          background: '#1D9E75',
           color: '#fff',
           border: 'none',
-          borderRadius: 10,
+          borderRadius: '8px',
           padding: '10px 20px',
-          fontWeight: 700,
-          fontSize: 14,
+          fontWeight: 500,
+          fontSize: '13px',
           cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 6,
-          transition: 'background 0.2s, transform 0.1s',
-          boxShadow: '0 2px 8px rgba(29,158,117,0.35)',
+          transition: 'opacity 0.15s',
         }}
-        onMouseEnter={e => (e.currentTarget.style.background = '#17896a')}
-        onMouseLeave={e => (e.currentTarget.style.background = GREEN)}
-        onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.96)')}
-        onMouseUp={e => (e.currentTarget.style.transform = 'scale(1)')}
+        onMouseEnter={e => e.currentTarget.style.opacity = '0.88'}
+        onMouseLeave={e => e.currentTarget.style.opacity = '1'}
       >
         Checkout →
       </button>
@@ -372,61 +302,28 @@ function CartBottomBar({ cartItems, onCheckout }) {
   );
 }
 
-// ─── Keyframes injected once ─────────────────────────────────────────────────
-const KEYFRAMES = `
-  @keyframes fadeSlideIn {
-    from { opacity: 0; transform: translateY(-6px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes slideUp {
-    from { transform: translateY(60px); opacity: 0; }
-    to   { transform: translateY(0);   opacity: 1; }
-  }
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to   { transform: rotate(360deg); }
-  }
-`;
-
-// ─── Main Page ────────────────────────────────────────────────────────────────
 export default function Menu() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const [menuItems,   setMenuItems]   = useState([]);
   const [loading,     setLoading]     = useState(true);
-  const [error,       setError]       = useState(null);
   const [activeFilter, setActiveFilter] = useState('All');
-  const [cartItems,   setCartItems]   = useState([]); // [{id, name, price, qty, prepTime}]
+  const [cartItems,   setCartItems]   = useState([]); 
 
   const timeSlot   = getTimeSlot();
   const categories = ['All', 'Snacks', 'Meals', 'Beverages'];
 
-  // ── Inject keyframes once ──────────────────────────────────────────────────
-  useEffect(() => {
-    const styleId = 'cafesync-keyframes';
-    if (!document.getElementById(styleId)) {
-      const style = document.createElement('style');
-      style.id = styleId;
-      style.textContent = KEYFRAMES;
-      document.head.appendChild(style);
-    }
-  }, []);
-
-  // ── Fetch menu from Firestore ─────────────────────────────────────────────
   useEffect(() => {
     async function fetchMenu() {
       try {
         setLoading(true);
         const q    = query(collection(db, 'menu'), orderBy('displayOrder', 'asc'));
         const snap = await getDocs(q);
-        const items = snap.docs
-          .map(d => ({ id: d.id, ...d.data() }))
-          .filter(item => item.available === true);
+        const items = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(item => item.available === true);
         setMenuItems(items);
       } catch (err) {
         console.error('Menu fetch error:', err);
-        setError('Failed to load menu. Please try again.');
       } finally {
         setLoading(false);
       }
@@ -434,15 +331,10 @@ export default function Menu() {
     fetchMenu();
   }, []);
 
-  // ── Filter ────────────────────────────────────────────────────────────────
   const filteredItems = activeFilter === 'All'
     ? menuItems
     : menuItems.filter(i => i.category === activeFilter);
 
-  // ── Recommended names set (lowercase) ─────────────────────────────────────
-  const recNames = new Set(timeSlot.items.map(n => n.toLowerCase()));
-
-  // ── Cart helpers ──────────────────────────────────────────────────────────
   function getCartEntry(id) {
     return cartItems.find(c => c.id === id) || null;
   }
@@ -450,17 +342,13 @@ export default function Menu() {
   function addItem(item) {
     setCartItems(prev => {
       const exists = prev.find(c => c.id === item.id);
-      if (exists) {
-        return prev.map(c => c.id === item.id ? { ...c, qty: c.qty + 1 } : c);
-      }
+      if (exists) return prev.map(c => c.id === item.id ? { ...c, qty: c.qty + 1 } : c);
       return [...prev, { id: item.id, name: item.name, price: item.price, qty: 1, prepTime: item.prepTime }];
     });
   }
 
   function incrementItem(id) {
-    setCartItems(prev =>
-      prev.map(c => c.id === id ? { ...c, qty: c.qty + 1 } : c)
-    );
+    setCartItems(prev => prev.map(c => c.id === id ? { ...c, qty: c.qty + 1 } : c));
   }
 
   function decrementItem(id) {
@@ -472,112 +360,29 @@ export default function Menu() {
     });
   }
 
-  // ── Checkout ──────────────────────────────────────────────────────────────
-  function handleCheckout() {
-    navigate('/student/cart', { state: { cartItems } });
-  }
-
-  // ── Logout ────────────────────────────────────────────────────────────────
   async function handleLogout() {
-    try { await logout(); } catch (e) { console.error(e); }
+    await logout();
   }
 
-  // ─── Render ──────────────────────────────────────────────────────────────
   const hasCart = cartItems.length > 0;
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: '#F9FAFB',
-        fontFamily: "'Inter', 'Segoe UI', sans-serif",
-        paddingBottom: hasCart ? 72 : 24,
-      }}
-    >
-      {/* NavBar */}
+    <div style={{ minHeight: '100vh', background: '#F5F7F6', paddingBottom: hasCart ? '80px' : '20px' }}>
       <NavBar user={user} onLogout={handleLogout} />
 
-      {/* Content */}
-      <main style={{ maxWidth: 520, margin: '0 auto', padding: '16px 14px 0' }}>
+      <main style={{ maxWidth: '600px', margin: '0 auto', padding: '20px 16px' }}>
+        
+        <h1 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', margin: '0 0 4px 0' }}>Today's Menu</h1>
+        <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 20px 0', lineHeight: 1.6 }}>Fresh items, ordered daily 🌱</p>
 
-        {/* Page heading */}
-        <h1 style={{ fontSize: 20, fontWeight: 700, color: '#111', marginBottom: 4 }}>
-          Today's Menu
-        </h1>
-        <p style={{ fontSize: 13, color: GRAY, marginBottom: 16, marginTop: 0 }}>
-          Fresh items, updated daily 🌿
-        </p>
-
-        {/* Recommendation Banner */}
         <RecommendationBanner slot={timeSlot} menuItems={menuItems} />
+        
+        <CategoryFilters categories={categories} active={activeFilter} onChange={setActiveFilter} />
 
-        {/* Category Filters */}
-        <CategoryFilters
-          categories={categories}
-          active={activeFilter}
-          onChange={setActiveFilter}
-        />
-
-        {/* Loading state */}
-        {loading && (
-          <div style={{ textAlign: 'center', padding: '48px 0', color: GRAY }}>
-            <div
-              style={{
-                width: 36,
-                height: 36,
-                border: `3px solid ${BORDER}`,
-                borderTop: `3px solid ${GREEN}`,
-                borderRadius: '50%',
-                margin: '0 auto 12px',
-                animation: 'spin 0.8s linear infinite',
-              }}
-            />
-            <span style={{ fontSize: 13 }}>Loading menu…</span>
-          </div>
-        )}
-
-        {/* Error state */}
-        {!loading && error && (
-          <div
-            style={{
-              background: '#FEF2F2',
-              border: '1px solid #FECACA',
-              borderRadius: 10,
-              padding: '14px 16px',
-              textAlign: 'center',
-              color: '#991B1B',
-              fontSize: 13,
-              fontWeight: 500,
-            }}
-          >
-            {error}
-          </div>
-        )}
-
-        {/* Empty state */}
-        {!loading && !error && filteredItems.length === 0 && (
-          <div
-            style={{
-              textAlign: 'center',
-              padding: '48px 0',
-              color: GRAY,
-            }}
-          >
-            <div style={{ fontSize: 40, marginBottom: 10 }}>🍽</div>
-            <div style={{ fontSize: 14, fontWeight: 600 }}>No items in this category</div>
-            <div style={{ fontSize: 12, marginTop: 4 }}>Try switching to "All" filters</div>
-          </div>
-        )}
-
-        {/* Menu grid */}
-        {!loading && !error && filteredItems.length > 0 && (
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: 10,
-            }}
-          >
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '40px 0', color: '#6B7280', fontSize: '13px' }}>Loading menu...</div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
             {filteredItems.map(item => (
               <MenuItemCard
                 key={item.id}
@@ -586,17 +391,13 @@ export default function Menu() {
                 onAdd={addItem}
                 onInc={incrementItem}
                 onDec={decrementItem}
-                isRecommended={recNames.has(item.name.toLowerCase())}
               />
             ))}
           </div>
         )}
       </main>
 
-      {/* Fixed cart bar */}
-      {hasCart && (
-        <CartBottomBar cartItems={cartItems} onCheckout={handleCheckout} />
-      )}
+      {hasCart && <CartBottomBar cartItems={cartItems} onCheckout={() => navigate('/student/cart', { state: { cartItems } })} />}
     </div>
   );
 }

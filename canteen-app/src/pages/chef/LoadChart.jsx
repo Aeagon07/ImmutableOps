@@ -1,315 +1,141 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { collection, query, where, onSnapshot, doc, getDoc } from 'firebase/firestore';
-import { Bar } from 'react-chartjs-2';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { db } from '../../firebase';
 import {
   Chart as ChartJS,
-  BarElement,
-  CategoryScale,
-  LinearScale,
   Title,
   Tooltip,
   Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale,
 } from 'chart.js';
-import { db } from '../../firebase';
-import { useAuth } from '../../context/AuthContext';
+import { Bar } from 'react-chartjs-2';
 
-ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+const TIME_SLOTS = [
+  '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
+  '11:00', '11:30', '12:00', '12:30', '13:00', '13:30',
+  '14:00', '14:30', '15:00', '15:30', '16:00', '16:30',
+  '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'
+];
 
-function getSlotLabel(date) {
-  const roundedMins = Math.floor(date.getMinutes() / 30) * 30;
-  const slotDate = new Date(date);
-  slotDate.setMinutes(roundedMins, 0, 0);
-  return slotDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+function getSlotIndex(dateObj) {
+  const h = dateObj.getHours();
+  const m = dateObj.getMinutes();
+  if (h < 8 || h >= 20) return -1; 
+  return (h - 8) * 2 + (m >= 30 ? 1 : 0);
 }
-
-function getSlotKey(date) {
-  // Numeric key for chrono-sorting: hours * 60 + rounded minutes
-  const rounded = Math.floor(date.getMinutes() / 30) * 30;
-  return date.getHours() * 60 + rounded;
-}
-
-function groupBySlot(orders) {
-  const map = new Map(); // key -> { label, count, sortKey }
-
-  for (const order of orders) {
-    if (!order.pickupTime) continue;
-    const raw = order.pickupTime?.toDate ? order.pickupTime.toDate() : new Date(order.pickupTime);
-    if (isNaN(raw)) continue;
-
-    const sortKey = getSlotKey(raw);
-    const label   = getSlotLabel(raw);
-
-    if (map.has(sortKey)) {
-      map.get(sortKey).count += 1;
-    } else {
-      map.set(sortKey, { label, count: 1, sortKey });
-    }
-  }
-
-  return [...map.values()].sort((a, b) => a.sortKey - b.sortKey);
-}
-
-// ─── NavBar ────────────────────────────────────────────────────────────────────
-
-function NavBar() {
-  const navigate = useNavigate();
-  const { logout } = useAuth();
-
-  return (
-    <div style={{
-      position:       'fixed',
-      top:            0,
-      left:           0,
-      right:          0,
-      height:         58,
-      background:     '#fff',
-      borderBottom:   '1px solid #E5E7EB',
-      display:        'flex',
-      alignItems:     'center',
-      justifyContent: 'space-between',
-      padding:        '0 24px',
-      zIndex:         100,
-      boxShadow:      '0 1px 4px rgba(0,0,0,0.06)',
-    }}>
-      {/* Left nav */}
-      <button onClick={() => navigate('/chef/queue')} style={navBtn('#1D9E75')}>
-        ← Queue
-      </button>
-
-      {/* Title */}
-      <span style={{ fontWeight: 800, fontSize: 17, color: '#1D9E75' }}>
-        📊 Load Chart
-      </span>
-
-      {/* Right nav */}
-      <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-        <button onClick={() => navigate('/chef/workload')} style={navBtn('#374151')}>
-          Workload →
-        </button>
-        <button onClick={logout} style={navBtn('#EF4444')}>
-          Logout
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function navBtn(color) {
-  return {
-    background:  'none',
-    border:      'none',
-    color,
-    fontWeight:  600,
-    fontSize:    13,
-    cursor:      'pointer',
-    padding:     0,
-  };
-}
-
-// ─── Main Component ────────────────────────────────────────────────────────────
 
 export default function LoadChart() {
-  const [orders,     setOrders]     = useState([]);
-  const [maxCap,     setMaxCap]     = useState(null);
-  const [capLoading, setCapLoading] = useState(true);
+  const navigate = useNavigate();
+  const [slotCounts, setSlotCounts] = useState(new Array(TIME_SLOTS.length).fill(0));
+  const [totalToday, setTotalToday] = useState(0);
 
-  // Real-time orders listener
   useEffect(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     const q = query(
       collection(db, 'orders'),
-      where('status', 'in', ['queued', 'preparing'])
+      where('createdAt', '>=', today)
     );
 
-    const unsub = onSnapshot(q, snap => {
-      setOrders(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    const unsubscribe = onSnapshot(q, snap => {
+      const counts = new Array(TIME_SLOTS.length).fill(0);
+      let countToday = 0;
+
+      snap.forEach(doc => {
+        const data = doc.data();
+        if (data.status === 'done') return; 
+        
+        countToday++;
+        const pickupDate = data.pickupTime ? new Date(data.pickupTime) : 
+                           (data.scheduledStart?.toDate ? data.scheduledStart.toDate() : new Date());
+
+        const idx = getSlotIndex(pickupDate);
+        if (idx !== -1) {
+          counts[idx]++;
+        }
+      });
+      setSlotCounts(counts);
+      setTotalToday(countToday);
     });
 
-    return () => unsub();
+    return () => unsubscribe();
   }, []);
 
-  // Fetch canteen settings once
-  useEffect(() => {
-    getDoc(doc(db, 'settings', 'canteen'))
-      .then(snap => {
-        if (snap.exists()) setMaxCap(snap.data().maxConcurrentOrders ?? null);
-      })
-      .catch(() => {})
-      .finally(() => setCapLoading(false));
-  }, []);
-
-  // ── Derived data ─────────────────────────────────────────────────────────────
-
-  const slots       = groupBySlot(orders);
-  const labels      = slots.map(s => s.label);
-  const counts      = slots.map(s => s.count);
-  const barColors   = counts.map(c => c >= 5 ? '#BA7517' : '#1D9E75');
-  const overloaded  = slots.filter(s => s.count >= 5);
-  const busiest     = slots.length
-    ? slots.reduce((a, b) => (a.count >= b.count ? a : b))
-    : null;
-  const maxY        = Math.max(8, ...(counts.length ? counts : [0]));
-  const totalOrders = orders.length;
-
-  // ── Chart config ─────────────────────────────────────────────────────────────
-
-  const chartData = {
-    labels,
+  const data = {
+    labels: TIME_SLOTS,
     datasets: [
       {
-        label:           'Orders',
-        data:            counts,
-        backgroundColor: barColors,
-        borderRadius:    6,
-        borderSkipped:   false,
-      },
-    ],
+        label: 'Active Orders per 30m Slot',
+        data: slotCounts,
+        backgroundColor: slotCounts.map(c => c > 5 ? '#A32D2D' : '#1D9E75'),
+        borderRadius: 4,
+      }
+    ]
   };
 
-  const chartOptions = {
-    responsive:          true,
+  const options = {
+    responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
-      title: {
-        display:  true,
-        text:     'Kitchen Load by 30-min Window',
-        font:     { size: 15, weight: 'bold' },
-        color:    '#111827',
-        padding:  { bottom: 12 },
-      },
       tooltip: {
+        backgroundColor: '#111827',
+        titleFont: { size: 13, family: "'Inter', sans-serif" },
+        bodyFont: { size: 13, family: "'Inter', sans-serif" },
         callbacks: {
-          label: ctx => `${ctx.parsed.y} order${ctx.parsed.y !== 1 ? 's' : ''} in this slot`,
-        },
-      },
+          label: (ctx) => `Orders: ${ctx.raw}`
+        }
+      }
     },
     scales: {
-      x: {
-        grid:  { display: false },
-        ticks: { color: '#6B7280', font: { size: 12 } },
-      },
-      y: {
-        min:  0,
-        max:  maxY,
-        grid: { color: '#F3F4F6' },
-        ticks: {
-          color:     '#6B7280',
-          font:      { size: 12 },
-          stepSize:  1,
-          precision: 0,
-        },
-      },
-    },
+      y: { beginAtZero: true, suggestedMax: 10, ticks: { precision: 0 } },
+      x: { ticks: { maxRotation: 45, minRotation: 45, color: '#6B7280', font: { size: 11 } } }
+    }
   };
 
-  // ── Render ───────────────────────────────────────────────────────────────────
+  const currentIdx = getSlotIndex(new Date());
+  const currentLoad = currentIdx >= 0 ? slotCounts[currentIdx] : 0;
+  const isOverload = currentLoad > 5;
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F3F4F6', fontFamily: "'Inter', sans-serif" }}>
-      <NavBar />
+    <div style={{ minHeight: '100vh', background: '#F5F7F6', paddingBottom: '80px' }}>
+      <header style={{ position: 'sticky', top: 0, zIndex: 100, height: '52px', background: '#FFFFFF', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px' }}>
+        <span style={{ fontSize: '16px', fontWeight: 700, color: '#1D9E75' }}>🍽 CaféSync</span>
+        <button onClick={() => navigate('/chef/queue')} style={{ background: 'none', border: 'none', color: '#374151', fontSize: '13px', fontWeight: 500, cursor: 'pointer', transition: 'opacity 0.15s' }}>
+          Back to Queue
+        </button>
+      </header>
 
-      <div style={{
-        maxWidth: 760,
-        margin:   '0 auto',
-        padding:  '82px 20px 48px',
-      }}>
+      <main style={{ maxWidth: '800px', margin: '0 auto', padding: '20px 16px' }}>
+        <h1 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', marginBottom: '20px' }}>Kitchen Load Forecast</h1>
 
-        {/* ── Overload Warning Banner ──────────────────────────────────────── */}
-        {overloaded.length > 0 && (
-          <div style={{
-            background:   '#FAEEDA',
-            border:       '1px solid #BA7517',
-            borderRadius: 10,
-            padding:      '12px 14px',
-            marginBottom: 20,
-            color:        '#7A4E0E',
-            fontWeight:   600,
-            fontSize:     14,
-          }}>
-            ⚠ Peak load detected:{' '}
-            <strong>{overloaded[0].label}</strong> has{' '}
-            <strong>{overloaded[0].count} orders</strong>.{' '}
-            Consider pausing new orders.
+        {isOverload && (
+          <div style={{ background: '#FCEBEB', border: '1px solid #FCA5A5', borderRadius: '12px', padding: '14px 16px', marginBottom: '20px', color: '#A32D2D', fontWeight: 600, fontSize: '13px' }}>
+            ⚠ Current 30-min slot is overloaded (&gt;5 orders).
           </div>
         )}
 
-        {/* ── Chart Card ──────────────────────────────────────────────────── */}
-        <div style={{
-          background:   '#fff',
-          borderRadius: 14,
-          border:       '1px solid #E5E7EB',
-          padding:      '20px 24px 24px',
-          marginBottom: 20,
-          boxShadow:    '0 2px 8px rgba(0,0,0,0.05)',
-        }}>
-          {slots.length === 0 ? (
-            <div style={{
-              height:     280,
-              display:    'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color:      '#9CA3AF',
-              fontSize:   15,
-            }}>
-              No active orders to chart
-            </div>
-          ) : (
-            <div style={{ height: 280 }}>
-              <Bar data={chartData} options={chartOptions} />
-            </div>
-          )}
-        </div>
-
-        {/* ── Summary Row ─────────────────────────────────────────────────── */}
-        <div style={{
-          background:   '#fff',
-          borderRadius: 14,
-          border:       '1px solid #E5E7EB',
-          padding:      '18px 24px',
-          boxShadow:    '0 2px 8px rgba(0,0,0,0.05)',
-          marginBottom: 16,
-        }}>
-          <div style={{ display: 'grid', gap: 10 }}>
-            <SummaryRow
-              label="Total active orders"
-              value={String(totalOrders)}
-            />
-            <SummaryRow
-              label="Busiest slot"
-              value={busiest ? `${busiest.label} (${busiest.count} order${busiest.count !== 1 ? 's' : ''})` : '—'}
-            />
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 4 }}>
-              <span style={{ fontWeight: 600, color: '#374151', fontSize: 14 }}>Status</span>
-              {overloaded.length > 0 ? (
-                <span style={{ color: '#BA7517', fontWeight: 700, fontSize: 14 }}>⚠ Overloaded</span>
-              ) : (
-                <span style={{ color: '#1D9E75', fontWeight: 700, fontSize: 14 }}>✓ Load balanced</span>
-              )}
-            </div>
-            {!capLoading && maxCap !== null && (
-              <SummaryRow
-                label="Max concurrent capacity"
-                value={`${maxCap} orders`}
-              />
-            )}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
+          <div style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '12px', padding: '14px 16px', display: 'flex', flexDirection: 'column', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+            <span style={{ fontSize: '11px', color: '#6B7280', letterSpacing: '0.02em', fontWeight: 600, marginBottom: '4px' }}>Active Orders Today</span>
+            <span style={{ fontSize: '18px', fontWeight: 600, color: '#111827' }}>{totalToday}</span>
+          </div>
+          <div style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '12px', padding: '14px 16px', display: 'flex', flexDirection: 'column', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+            <span style={{ fontSize: '11px', color: '#6B7280', letterSpacing: '0.02em', fontWeight: 600, marginBottom: '4px' }}>Current Slot Load</span>
+            <span style={{ fontSize: '18px', fontWeight: 600, color: isOverload ? '#A32D2D' : '#1D9E75' }}>{currentLoad}</span>
           </div>
         </div>
 
-      </div>
-    </div>
-  );
-}
-
-// ─── Summary Row Helper ────────────────────────────────────────────────────────
-
-function SummaryRow({ label, value }) {
-  return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <span style={{ color: '#6B7280', fontSize: 14 }}>{label}</span>
-      <span style={{ fontWeight: 700, color: '#111827', fontSize: 14 }}>{value}</span>
+        <div style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '12px', padding: '14px 16px', height: '400px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+          <Bar data={data} options={options} />
+        </div>
+      </main>
     </div>
   );
 }
