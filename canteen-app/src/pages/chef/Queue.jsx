@@ -4,6 +4,8 @@ import { collection, query, where, onSnapshot, doc, updateDoc } from 'firebase/f
 import { db } from '../../firebase';
 import { useAuth } from '../../context/AuthContext';
 import StatusBadge from '../../components/StatusBadge';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChefHat, BarChart3, Settings, LogOut, Check, Play, Edit3, X, User } from 'lucide-react';
 
 function formatTime(val) {
   if (!val) return '—';
@@ -17,127 +19,65 @@ function sortOrders(orders) {
     const aOver = a.manualPriorityOverride === true ? 0 : 1;
     const bOver = b.manualPriorityOverride === true ? 0 : 1;
     if (aOver !== bOver) return aOver - bOver;
-
     const aTime = a.scheduledStart?.toDate ? a.scheduledStart.toDate() : new Date(a.scheduledStart ?? 0);
     const bTime = b.scheduledStart?.toDate ? b.scheduledStart.toDate() : new Date(b.scheduledStart ?? 0);
     return aTime - bTime;
   });
 }
 
-function buildItemsString(items) {
-  if (!items || items.length === 0) return 'No items';
-  return items.map(i => `${i.qty ?? i.quantity ?? 1}x ${i.name}`).join(', ');
-}
+function ActionButton({ label, type = 'primary', icon: Icon, onClick, disabled }) {
+  let baseStyle = { borderRadius: '10px', padding: '10px 20px', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px', cursor: disabled ? 'not-allowed' : 'pointer', border: 'none', width: '100%', justifyContent: 'center' };
+  if (type === 'primary') Object.assign(baseStyle, { background: '#1D9E75', color: '#fff' });
+  else if (type === 'secondary') Object.assign(baseStyle, { background: 'transparent', color: '#1D9E75', border: '2px solid #1D9E75' });
+  else if (type === 'danger') Object.assign(baseStyle, { background: '#FCEBEB', color: '#A32D2D' });
 
-function ActionButton({ label, type = 'primary', onClick, disabled }) {
-  const [hover, setHover] = useState(false);
-  
-  let baseStyle = {
-    borderRadius: '8px',
-    padding: '10px 20px',
-    fontWeight: 500,
-    fontSize: '13px',
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    transition: 'opacity 0.15s, transform 0.1s',
-    opacity: disabled ? 0.5 : 1,
-  };
-
-  if (type === 'primary') {
-    Object.assign(baseStyle, { background: '#1D9E75', color: '#fff', border: 'none' });
-  } else if (type === 'secondary') {
-    Object.assign(baseStyle, { background: 'transparent', color: '#1D9E75', border: '1.5px solid #1D9E75' });
-  } else if (type === 'danger') {
-    Object.assign(baseStyle, { background: 'transparent', color: '#A32D2D', border: '1px solid #FECACA' });
-  }
-  
   return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      onMouseEnter={() => { if(!disabled) setHover(true); }}
-      onMouseLeave={() => { if(!disabled) setHover(false); }}
-      onMouseDown={e => { if(!disabled) e.currentTarget.style.transform = 'scale(0.98)'; }}
-      onMouseUp={e => { if(!disabled) e.currentTarget.style.transform = 'scale(1)'; }}
-      style={{ ...baseStyle, opacity: disabled ? 0.5 : (hover ? 0.88 : 1) }}
-    >
-      {label}
-    </button>
+    <motion.button whileHover={{ scale: disabled ? 1 : 1.02 }} whileTap={{ scale: disabled ? 1 : 0.98 }} onClick={onClick} disabled={disabled} style={{ ...baseStyle, opacity: disabled ? 0.5 : 1 }}>
+      {Icon && <Icon size={16} strokeWidth={3} />} {label}
+    </motion.button>
   );
 }
 
 function OverridePanel({ orderId, currentPriority }) {
   const [selected, setSelected] = useState(currentPriority ?? 'normal');
-  const [note,     setNote]     = useState('');
-  const [saving,   setSaving]   = useState(false);
-
+  const [note, setNote] = useState('');
+  const [saving, setSaving] = useState(false);
   const priorities = ['normal', 'high', 'urgent'];
 
   async function applyOverride() {
     setSaving(true);
-    try {
-      await updateDoc(doc(db, 'orders', orderId), {
-        priority: selected,
-        manualPriorityOverride: true,
-        overrideNote: note,
-      });
-    } catch (e) {
-      console.error(e);
-    }
+    try { await updateDoc(doc(db, 'orders', orderId), { priority: selected, manualPriorityOverride: true, overrideNote: note }); } 
+    catch (e) { console.error(e); }
     setSaving(false);
   }
-
   async function clearOverride() {
     setSaving(true);
-    try {
-      await updateDoc(doc(db, 'orders', orderId), {
-        manualPriorityOverride: false,
-        overrideNote: '',
-      });
-    } catch (e) {
-      console.error(e);
-    }
+    try { await updateDoc(doc(db, 'orders', orderId), { manualPriorityOverride: false, overrideNote: '' }); } 
+    catch (e) { console.error(e); }
     setSaving(false);
   }
 
   return (
-    <div style={{ marginTop: '12px', background: '#F5F7F6', border: '1px solid #E5E7EB', borderRadius: '8px', padding: '14px 16px' }}>
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
+    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} style={{ marginTop: '16px', background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '12px', padding: '16px', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
         {priorities.map(p => {
           const active = selected === p;
-          const pxColor = active ? '#fff' : '#374151';
-          const pxBg = active ? '#1D9E75' : '#FFFFFF';
           return (
-            <label key={p} style={{ cursor: 'pointer' }}>
-              <input
-                type="radio"
-                name={`priority-${orderId}`}
-                value={p}
-                checked={selected === p}
-                onChange={() => setSelected(p)}
-                style={{ display: 'none' }}
-              />
-              <span style={{ display: 'inline-block', padding: '6px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: 500, border: active ? 'none' : '1px solid #E5E7EB', background: pxBg, color: pxColor, transition: 'all 0.15s' }}>
+            <motion.label whileTap={{ scale: 0.95 }} key={p} style={{ cursor: 'pointer', flex: 1 }}>
+              <input type="radio" value={p} checked={selected === p} onChange={() => setSelected(p)} style={{ display: 'none' }} />
+              <div style={{ textAlign: 'center', padding: '8px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, border: active ? 'none' : '1px solid #E5E7EB', background: active ? '#1D9E75' : '#FFFFFF', color: active ? '#fff' : '#374151', transition: 'all 0.2s' }}>
                 {p.charAt(0).toUpperCase() + p.slice(1)}
-              </span>
-            </label>
+              </div>
+            </motion.label>
           );
         })}
       </div>
-
-      <input
-        type="text"
-        placeholder="Note for chef team"
-        maxLength={100}
-        value={note}
-        onChange={e => setNote(e.target.value)}
-        style={{ width: '100%', boxSizing: 'border-box', border: '1px solid #E5E7EB', borderRadius: '8px', padding: '10px 14px', fontSize: '13px', outline: 'none', marginBottom: '14px' }}
-      />
-
-      <div style={{ display: 'flex', gap: '8px' }}>
-        <ActionButton label="Apply Override" type="primary" onClick={applyOverride} disabled={saving} />
-        <ActionButton label="Clear Override" type="danger" onClick={clearOverride} disabled={saving} />
+      <input type="text" placeholder="Note for chef team" maxLength={100} value={note} onChange={e => setNote(e.target.value)} style={{ width: '100%', boxSizing: 'border-box', border: '1px solid #E5E7EB', borderRadius: '8px', padding: '10px 14px', fontSize: '13px', outline: 'none', marginBottom: '16px', fontWeight: 500 }} />
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <ActionButton label="Apply Override" type="primary" icon={Check} onClick={applyOverride} disabled={saving} />
+        <ActionButton label="Clear" type="danger" icon={X} onClick={clearOverride} disabled={saving} />
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -148,118 +88,53 @@ function OrderCard({ order, overrideOpenIds, setOverrideOpenIds }) {
   function toggleOverride() {
     setOverrideOpenIds(prev => {
       const next = new Set(prev);
-      if (next.has(order.id)) next.delete(order.id);
-      else next.add(order.id);
+      if (next.has(order.id)) next.delete(order.id); else next.add(order.id);
       return next;
     });
   }
 
-  async function handleStatusUpdate(newStatus) {
-    setUpdating(true);
-    try {
-      await updateDoc(doc(db, 'orders', order.id), { status: newStatus });
-    } catch (e) {
-      console.error(e);
-    }
-    setUpdating(false);
-  }
-
-  const itemsStr    = buildItemsString(order.items);
-  const totalStr    = order.totalPrice != null ? `₹${order.totalPrice}` : '';
-  const pickupStr   = formatTime(order.pickupTime ?? order.scheduledStart);
-  const prepMin     = order.prepEstimate ?? order.estimatedPrepTime ?? '?';
-  const startStr    = formatTime(order.startPrepAt ?? order.scheduledStart);
-  const aiReason    = order.aiReason ?? order.reason ?? '';
-
   return (
-    <div style={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid #E5E7EB', padding: '14px 16px', marginBottom: '10px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-        <span style={{ fontWeight: 600, fontSize: '14px', color: '#111827' }}>
-          #{order.id.slice(0, 6).toUpperCase()} - {order.studentName ?? order.userName ?? 'Student'}
-        </span>
+    <motion.div layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ type: 'spring', stiffness: 400, damping: 30 }} style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E5E7EB', padding: '20px', marginBottom: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
+      <motion.div layout="position" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontWeight: 800, fontSize: '15px', color: '#111827', fontFamily: "'Courier New', monospace" }}>#{order.id.slice(0, 6).toUpperCase()}</span>
+          <span style={{ fontSize: '13px', fontWeight: 600, color: '#6B7280', display: 'flex', alignItems: 'center', gap: '4px' }}><User size={14}/> {order.studentName || 'Student'}</span>
+        </div>
         <div style={{ display: 'flex', gap: '6px' }}>
-          {order.manualPriorityOverride && <StatusBadge status="high" labelOverride="✎ OVERRIDE" />}
-          <StatusBadge status={order.priority ?? 'normal'} />
+          {order.manualPriorityOverride && <StatusBadge status="high" labelOverride="OVERRIDE" />}
+          <StatusBadge status={order.priority || 'normal'} />
         </div>
-      </div>
+      </motion.div>
 
-      <div style={{ fontSize: '13px', color: '#374151', marginBottom: '8px', lineHeight: 1.6 }}>
-        {itemsStr} <span style={{ fontFamily: "'Courier New', monospace" }}>{totalStr ? ` — ${totalStr}` : ''}</span>
-      </div>
+      <motion.div layout="position" style={{ fontSize: '15px', color: '#111827', marginBottom: '16px', lineHeight: 1.6, fontWeight: 500, padding: '12px', background: '#F9FAFB', borderRadius: '8px', border: '1px dashed #D1D5DB' }}>
+        {order.items?.map(i => `${i.qty}x ${i.name}`).join(', ') || 'No items'}
+      </motion.div>
 
-      <div style={{ fontSize: '11px', color: '#6B7280', marginBottom: '14px', letterSpacing: '0.02em' }}>
-        Pickup: <span style={{ fontFamily: "'Courier New', monospace" }}>{pickupStr}</span>&nbsp;&nbsp;|&nbsp;&nbsp;Est. {prepMin} min
-      </div>
-
-      <div style={{ background: '#E1F5EE', border: '1px solid #5DCAA5', borderRadius: '8px', padding: '10px', margin: '14px 0' }}>
-        <div style={{ fontWeight: 600, fontSize: '13px', color: '#085041' }}>
-          🤖 Start prep at: <span style={{ fontFamily: "'Courier New', monospace" }}>{startStr}</span>
+      <motion.div layout="position" style={{ display: 'flex', justifyContent: 'space-between', background: '#E1F5EE', borderRadius: '8px', padding: '12px', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <span style={{ fontSize: '11px', fontWeight: 700, color: '#085041', textTransform: 'uppercase' }}>Expected Pickup</span>
+          <span style={{ fontSize: '14px', fontFamily: "'Courier New', monospace", fontWeight: 700, color: '#1D9E75' }}>{formatTime(order.pickupTime ?? order.scheduledStart)}</span>
         </div>
-        {aiReason && (
-          <div style={{ fontStyle: 'italic', fontSize: '11px', color: '#085041', marginTop: '4px', letterSpacing: '0.02em' }}>
-            {aiReason}
-          </div>
-        )}
-      </div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+          <span style={{ fontSize: '11px', fontWeight: 700, color: '#085041', textTransform: 'uppercase' }}>Start Prep</span>
+          <span style={{ fontSize: '14px', fontFamily: "'Courier New', monospace", fontWeight: 700, color: '#1D9E75' }}>{formatTime(order.startPrepAt ?? order.scheduledStart)}</span>
+        </div>
+      </motion.div>
 
-      <div style={{ marginBottom: '14px' }}>
-        {order.status === 'queued' && <ActionButton label="▶ Start Preparing" type="primary" disabled={updating} onClick={() => handleStatusUpdate('preparing')} />}
-        {order.status === 'preparing' && <ActionButton label="✓ Mark Ready" type="secondary" disabled={updating} onClick={() => handleStatusUpdate('ready')} />}
-      </div>
+      <motion.div layout="position" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+        <div style={{ flex: 1 }}>
+          {order.status === 'queued' && <ActionButton label="Start Preparing" type="primary" icon={Play} disabled={updating} onClick={() => { setUpdating(true); updateDoc(doc(db, 'orders', order.id), { status: 'preparing' }).finally(() => setUpdating(false)); }} />}
+          {order.status === 'preparing' && <ActionButton label="Mark Ready" type="secondary" icon={Check} disabled={updating} onClick={() => { setUpdating(true); updateDoc(doc(db, 'orders', order.id), { status: 'ready' }).finally(() => setUpdating(false)); }} />}
+        </div>
+        <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={toggleOverride} style={{ width: '40px', height: '40px', borderRadius: '10px', border: '1px solid #E5E7EB', background: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#6B7280' }}>
+          <Edit3 size={18} />
+        </motion.button>
+      </motion.div>
 
-      <div>
-        <button onClick={toggleOverride} style={{ background: 'none', border: 'none', color: '#6B7280', fontSize: '11px', cursor: 'pointer', padding: 0, fontWeight: 600, letterSpacing: '0.02em' }}>
-          ⚙ OVERRIDE PRIORITY
-        </button>
-        {isOpen && <OverridePanel orderId={order.id} currentPriority={order.priority ?? 'normal'} />}
-      </div>
-    </div>
+      <AnimatePresence>{isOpen && <OverridePanel orderId={order.id} currentPriority={order.priority} />}</AnimatePresence>
+    </motion.div>
   );
 }
-
-function PulseDot({ active }) {
-  return (
-    <span style={{ position: 'relative', display: 'inline-block', width: '12px', height: '12px', marginLeft: '10px' }}>
-      <span style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: '#1D9E75', opacity: active ? 1 : 0.3, animation: active ? 'pulse-ring 1s ease-out infinite' : 'none' }} />
-      <span style={{ position: 'absolute', inset: 2, borderRadius: '50%', background: '#1D9E75' }} />
-      <style>{`
-        @keyframes pulse-ring {
-          0%   { box-shadow: 0 0 0 0 rgba(29,158,117,0.6); }
-          70%  { box-shadow: 0 0 0 8px rgba(29,158,117,0);  }
-          100% { box-shadow: 0 0 0 0 rgba(29,158,117,0);    }
-        }
-      `}</style>
-    </span>
-  );
-}
-
-function NavBar({ activeCount, pulseActive }) {
-  const navigate = useNavigate();
-  const { logout } = useAuth();
-
-  return (
-    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '52px', background: '#FFFFFF', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', zIndex: 100 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <span style={{ fontWeight: 700, fontSize: '16px', color: '#1D9E75' }}>🍽 CaféSync</span>
-        <PulseDot active={pulseActive} />
-      </div>
-
-      <span style={{ color: '#374151', fontSize: '13px', fontWeight: 500 }}>
-        {activeCount} order{activeCount !== 1 ? 's' : ''} active
-      </span>
-
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-        <button onClick={() => navigate('/chef/chart')} style={navLinkStyle}>Load Chart</button>
-        <button onClick={() => navigate('/chef/workload')} style={navLinkStyle}>Workload</button>
-        <button onClick={logout} style={{ ...navLinkStyle, color: '#A32D2D' }}>Logout</button>
-      </div>
-    </div>
-  );
-}
-
-const navLinkStyle = {
-  background: 'none', border: 'none', color: '#374151', fontWeight: 500, fontSize: '13px', cursor: 'pointer', padding: 0, textDecoration: 'none', transition: 'opacity 0.15s'
-};
 
 export default function Queue() {
   const [orders, setOrders] = useState([]);
@@ -270,14 +145,10 @@ export default function Queue() {
   useEffect(() => {
     const q = query(collection(db, 'orders'), where('status', 'in', ['queued', 'preparing']));
     const unsubscribe = onSnapshot(q, snapshot => {
-      const raw = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-      const sorted = sortOrders(raw);
+      const sorted = sortOrders(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
       setOrders(sorted);
-
-      const prev = prevCountRef.current;
-      if (prev !== null && sorted.length > prev) {
-        setPulseActive(true);
-        setTimeout(() => setPulseActive(false), 2500);
+      if (prevCountRef.current !== null && sorted.length > prevCountRef.current) {
+        setPulseActive(true); setTimeout(() => setPulseActive(false), 1000);
       }
       prevCountRef.current = sorted.length;
     });
@@ -285,20 +156,31 @@ export default function Queue() {
   }, []);
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F5F7F6', paddingBottom: '80px' }}>
-      <NavBar activeCount={orders.length} pulseActive={pulseActive} />
-
-      <main style={{ maxWidth: '680px', margin: '0 auto', padding: '72px 16px 20px' }}>
-        {orders.length === 0 ? (
-          <div style={{ textAlign: 'center', color: '#6B7280', fontSize: '14px', fontWeight: 600, marginTop: '80px' }}>
-            <div style={{ fontSize: '32px', marginBottom: '12px' }}>🎉</div>
-            No active orders
+    <div style={{ paddingBottom: '80px' }}>
+      <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '32px 24px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#111827', margin: 0, display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <ChefHat color="#1D9E75" size={32} /> Active Queue
+            <motion.div animate={{ scale: pulseActive ? [1, 1.5, 1] : 1, backgroundColor: pulseActive ? ['#A32D2D', '#1D9E75'] : '#1D9E75' }} transition={{ duration: 0.5 }} style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#1D9E75', marginLeft: '4px' }} />
+          </h1>
+          <div style={{ background: '#111827', color: '#fff', padding: '8px 16px', borderRadius: '20px', fontSize: '14px', fontWeight: 700 }}>
+            {orders.length} Active Orders
           </div>
-        ) : (
-          orders.map(order => (
-            <OrderCard key={order.id} order={order} overrideOpenIds={overrideOpenIds} setOverrideOpenIds={setOverrideOpenIds} />
-          ))
-        )}
+        </div>
+
+        <motion.div layout style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '24px' }}>
+          <AnimatePresence mode="popLayout">
+            {orders.length === 0 ? (
+              <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#6B7280', padding: '64px', background: '#FFFFFF', borderRadius: '16px', border: '2px dashed #E5E7EB', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}>
+                <Check size={56} color="#D1D5DB" style={{ marginBottom: '16px' }} />
+                <div style={{ fontSize: '20px', fontWeight: 800, color: '#111827' }}>Kitchen is clear</div>
+                <div style={{ fontSize: '15px', fontWeight: 500, marginTop: '8px' }}>Waiting for new orders...</div>
+              </motion.div>
+            ) : (
+              orders.map(order => <OrderCard key={order.id} order={order} overrideOpenIds={overrideOpenIds} setOverrideOpenIds={setOverrideOpenIds} />)
+            )}
+          </AnimatePresence>
+        </motion.div>
       </main>
     </div>
   );
