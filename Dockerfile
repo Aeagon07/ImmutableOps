@@ -10,7 +10,7 @@ COPY canteen-app/package*.json ./
 RUN npm ci
 
 # Copy source code
-COPY canteen-app . .
+COPY canteen-app . 
 
 # Build the app
 RUN npm run build
