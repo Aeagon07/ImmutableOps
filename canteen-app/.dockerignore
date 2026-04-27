@@ -1,0 +1,12 @@
+node_modules
+npm-debug.log
+dist
+.git
+.gitignore
+.env
+.env.local
+README.md
+.vscode
+.DS_Store
+firebase-debug.log
+functions/node_modules
