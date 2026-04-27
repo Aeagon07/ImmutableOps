@@ -10,7 +10,7 @@ COPY canteen-app/package*.json ./
 RUN npm ci
 
 # Copy source code
-COPY canteen-app . 
+COPY canteen-app/ .
 
 # Build the app
 RUN npm run build
@@ -33,7 +33,7 @@ RUN npm ci --only=production
 COPY --from=builder /app/dist ./dist
 
 # Expose port
-EXPOSE 8000
+EXPOSE 5173
 
 # Start the app
 CMD ["serve", "-s", "dist", "-l", "5173"]
