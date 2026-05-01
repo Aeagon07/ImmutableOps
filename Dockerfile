@@ -1,39 +1,37 @@
-# Build stage
+# ---------- Build Stage ----------
 FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
+# 👇 Copy only package files (cache optimization)
 COPY canteen-app/package*.json ./
 
-# Install dependencies
+# 👇 Faster install (better than npm install)
 RUN npm ci
 
-# Copy source code
+# 👇 Copy env BEFORE build (important for Vite)
+COPY canteen-app/.env .env
+
+# 👇 Copy remaining code
 COPY canteen-app/ .
 
-# Build the app
+# 👇 Build project
 RUN npm run build
 
-# Production stage
+
+# ---------- Production Stage ----------
 FROM node:18-alpine
 
 WORKDIR /app
 
-# Install serve to run the production build
+# 👇 Lightweight static server
 RUN npm install -g serve
 
-# Copy package files
-COPY canteen-app/package*.json ./
-
-# Install only production dependencies
-RUN npm ci --only=production
-
-# Copy built app from builder stage
+# 👇 Copy only build output (smaller image)
 COPY --from=builder /app/dist ./dist
 
-# Expose port
+# 👇 Expose correct port
 EXPOSE 5173
 
-# Start the app
-CMD ["serve", "-s", "dist", "-l", "5173"]
+# 👇 Run app
+CMD ["npx", "serve", "-s", "dist", "-l", "5173"]
