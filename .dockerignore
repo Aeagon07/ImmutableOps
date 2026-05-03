@@ -10,3 +10,4 @@ README.md
 .DS_Store
 firebase-debug.log
 functions/node_modules
+Dockerfile
